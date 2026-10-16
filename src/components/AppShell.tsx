@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { ClipboardCheck, Home, LogOut, SprayCan, Star, Users } from "lucide-react";
+import { ClipboardCheck, Home, LogOut, MessagesSquare, SprayCan, Star, Users } from "lucide-react";
 import { LabSideNav } from "lab-theme/LabSideNav";
 import HubBackLink from "./HubBackLink";
 import LabLogo from "./LabLogo";
@@ -62,7 +62,7 @@ function SideShell({ side }: { side: "left" | "right" }) {
     <LabSideNav
       className={`w-64 shrink-0 self-stretch min-h-screen${side === "right" ? " lab-sidebar--right" : ""}`}
       header={header}
-      quickLinks={[{ to: "/", label: "Home", icon: Home }, { to: "/people", label: "People", icon: Users }, { to: "/weekly-report", label: "Weekly Report", icon: ClipboardCheck }, { to: "/peer-assessments", label: "Peer Assessments", icon: Star }, { to: "/cleanliness", label: "Cleanliness Audit", icon: SprayCan }]}
+      quickLinks={[{ to: "/", label: "Home", icon: Home }, { to: "/people", label: "People", icon: Users }, { to: "/weekly-report", label: "Weekly Report", icon: ClipboardCheck }, { to: "/peer-assessments", label: "Peer Assessments", icon: Star }, { to: "/cleanliness", label: "Cleanliness Audit", icon: SprayCan }, { to: "/one-on-ones", label: "1:1s", icon: MessagesSquare }]}
       sections={[]}
       footer={<><ViewAsPicker /><SignOutButton /></>}
     />

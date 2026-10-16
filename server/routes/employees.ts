@@ -19,6 +19,7 @@ import { registerPeerAssessmentRoutes } from "./peerAssessments";
 import { registerCleanlinessRoutes } from "./cleanliness";
 import { registerPtoRoutes } from "./pto";
 import { registerUploadRoutes } from "./uploads";
+import { registerOneOnOneRoutes } from "./oneOnOnes";
 
 const send = (res: express.Response, data: unknown) => res.json({ ok: true, data });
 const fail = (res: express.Response, status: number, error: string) => res.status(status).json({ ok: false, error });
@@ -47,6 +48,7 @@ export function registerEmployeeRoutes(app: express.Express, getAuthUser: GetAut
   registerCleanlinessRoutes(app, getAuthUser);
   registerPtoRoutes(app, getAuthUser);
   registerUploadRoutes(app, getAuthUser);
+  registerOneOnOneRoutes(app, getAuthUser);
 
   const withAccess = async (req: express.Request, res: express.Response) => {
     const current = await resolveCurrent(req, getAuthUser);

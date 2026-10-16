@@ -9,6 +9,7 @@ import WeeklyReportPage from "./pages/WeeklyReportPage";
 import PeerAssessmentPage from "./pages/PeerAssessmentPage";
 import CleanlinessAuditPage from "./pages/CleanlinessAuditPage";
 import CleanlinessReportPage from "./pages/CleanlinessReportPage";
+import OneOnOnePage from "./pages/OneOnOnePage";
 import { apiGet } from "./lib/api";
 import { HUB_APP_ID } from "./lib/brand";
 
@@ -41,7 +42,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/*" element={<RequireAuth><Routes><Route path="/" element={<AppShell />}><Route index element={<HomePage />} /><Route path="people" element={<PeoplePage />} /><Route path="weekly-report" element={<WeeklyReportPage />} /><Route path="peer-assessments" element={<PeerAssessmentPage />} /><Route path="cleanliness" element={<CleanlinessAuditPage />} /><Route path="cleanliness/report" element={<CleanlinessReportPage />} /></Route></Routes></RequireAuth>} />
+          <Route path="/*" element={<RequireAuth><Routes><Route path="/" element={<AppShell />}><Route index element={<HomePage />} /><Route path="people" element={<PeoplePage />} /><Route path="weekly-report" element={<WeeklyReportPage />} /><Route path="peer-assessments" element={<PeerAssessmentPage />} /><Route path="cleanliness" element={<CleanlinessAuditPage />} /><Route path="cleanliness/report" element={<CleanlinessReportPage />} /><Route path="one-on-ones" element={<OneOnOnePage />} /></Route></Routes></RequireAuth>} />
         </Routes>
       </BrowserRouter>
     </AppProvider>
