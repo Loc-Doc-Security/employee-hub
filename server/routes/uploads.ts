@@ -2,11 +2,12 @@
  * Photo uploads. Each photo is uploaded on its own as soon as it's taken (the browser shrinks it
  * first), so a flaky connection only ever retries one photo, never the whole audit.
  *
- *   POST /api/uploads?purpose=cleanliness   raw image body (JPEG/PNG/WebP, ≤ 12 MB) → { id }
+ *   POST /api/uploads?purpose=cleanliness|spotlight   raw image body (JPEG/PNG/WebP, ≤ 12 MB) → { id }
  *   GET  /api/uploads/:id                    the image, if the caller may see it
  *
- * Who may see a photo: the person who uploaded it, or anyone in the same company who can view the
- * cleanliness report or edit audits.
+ * Who may see a photo: the person who uploaded it; for cleanliness photos, anyone in the same company
+ * who can view the cleanliness report or edit audits; for spotlight photos, anyone in the same
+ * company (the spotlight showcase is open to everyone).
  */
 import express from "express";
 import { getProductDb } from "../db/client";
@@ -14,7 +15,7 @@ import { resolveCurrent, type GetAuthUser } from "../auth/currentEmployee";
 import { can } from "../auth/permissions";
 import { loadFile, saveFile, sniffImage } from "../lib/storage";
 
-const PURPOSES = new Set(["cleanliness"]);
+const PURPOSES = new Set(["cleanliness", "spotlight"]);
 const fail = (res: express.Response, status: number, error: string) => res.status(status).json({ ok: false, error });
 
 export function registerUploadRoutes(app: express.Express, getAuthUser: GetAuthUser) {
@@ -48,13 +49,14 @@ export function registerUploadRoutes(app: express.Express, getAuthUser: GetAuthU
       const access = current.access;
       if (!/^[0-9a-f-]{36}$/i.test(req.params.id)) return void fail(res, 404, "Not found");
       const { rows } = await getProductDb().query(
-        "SELECT company_id, uploaded_by_id, content_type, storage_key FROM employee_hub.uploads WHERE id = $1",
+        "SELECT company_id, uploaded_by_id, purpose, content_type, storage_key FROM employee_hub.uploads WHERE id = $1",
         [req.params.id],
       );
       const f = rows[0];
       if (!f) return void fail(res, 404, "Not found");
       const target = { companyId: f.company_id };
       const allowed = access && (f.uploaded_by_id === access.employeeId
+        || (f.purpose === "spotlight" && access.companyId === f.company_id)
         || can(access, "cleanliness.view_report", target) || can(access, "cleanliness.edit_any", target)
         || access.grants.some((g) => g.permission === "cleanliness.view_report" && g.scope.type === "department" && g.scope.companyId === f.company_id));
       if (!allowed) return void fail(res, 403, "Not allowed");
