@@ -13,6 +13,7 @@ type Card = {
   streak: number; badges: { key: string; label: string; emoji: string }[];
   quarter: { label: string; points: number; level: { name: string; min: number; nextAt: number | null; nextName: string | null } };
   recent: { month: string; overall: number; participation: number }[];
+  driver?: { week_label: string; score: number | null; is_parked: boolean; fleet_score: number | null }[];
 };
 type TeamRow = { rank: number; id: string; name: string; overall: number; level: string; isMe: boolean };
 
@@ -94,6 +95,18 @@ export function ScoreCard({ card }: { card: Card }) {
           <div className="text-xs text-slate-500">Average of this month's finished audit weeks (a missed week counts as 0)</div>
         </div>
       </div>
+
+      {card.driver && card.driver.length > 0 && (
+        <div className="glass-card rounded-2xl p-6 space-y-2">
+          <div className="flex justify-between"><span className="font-semibold">Driver score</span><span className="text-xs text-slate-500">For reference, not part of your score</span></div>
+          {card.driver.map((d) => (
+            <div key={d.week_label} className="flex justify-between text-sm">
+              <span>{d.week_label}</span>
+              <span>{d.score == null ? "No activity" : <><span className="font-semibold">{d.score}</span>{d.fleet_score != null && <span className="text-slate-500"> · fleet {d.fleet_score.toFixed(1)}</span>}</>}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="glass-card rounded-2xl p-6">
         <div className="font-semibold mb-3">Last 6 months</div>

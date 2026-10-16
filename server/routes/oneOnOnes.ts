@@ -7,7 +7,7 @@
  *   POST /api/one-on-ones                   log a 1:1 (managers, for their people; no edits after)
  *
  * The review numbers follow every other privacy rule: weekly reports are a COUNT only, peer
- * assessments are averages only.
+ * assessments are averages only. Driver scores are included for reference (not scored).
  */
 import type express from "express";
 import { getProductDb } from "../db/client";
@@ -96,10 +96,15 @@ export function registerOneOnOneRoutes(app: express.Express, getAuthUser: GetAut
           WHERE employee_id = $1 AND removed_at IS NULL AND week_start >= ($2::date - 6) AND week_start <= $3 ORDER BY week_start`,
         [id, month, today])).rows.map((r) => r.week);
 
+      const driver = (await db.query(
+        `SELECT r.week_label, d.score::float AS score, d.is_parked, d.parked_reason
+           FROM employee_hub.driver_scores d JOIN employee_hub.driver_score_reports r ON r.id = d.report_id
+          WHERE d.employee_id = $1 AND r.week_end >= $2 AND r.week_start <= $3 ORDER BY r.week_start`, [id, month, today])).rows;
+
       send(res, {
         canWrite: id !== access.employeeId && can(access, "one_on_ones.write", target),
         history,
-        review: { month: month.slice(0, 7), weekly, peer, cleanliness, pto },
+        review: { month: month.slice(0, 7), weekly, peer, cleanliness, pto, driver },
       });
     } catch (err) {
       fail(res, 500, `Could not load 1:1s: ${(err as Error).message}`);

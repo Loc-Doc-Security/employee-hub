@@ -19,6 +19,7 @@ type Review = {
   peer: { received: number; overall: number | null };
   cleanliness: { week: string; score: number }[];
   pto: string[];
+  driver: { week_label: string; score: number | null; is_parked: boolean; parked_reason: string | null }[];
 };
 type Detail = { canWrite: boolean; history: Meeting[]; review: Review };
 
@@ -63,6 +64,7 @@ function ReviewNumbers({ r }: { r: Review }) {
     ["Peer assessments", r.peer.received ? `${r.peer.received} received · avg ${r.peer.overall?.toFixed(2)}` : "None yet"],
     ["Cleanliness", r.cleanliness.length ? r.cleanliness.map((c) => `${c.score}%`).join(" · ") : "No audits yet"],
     ["PTO weeks", r.pto.length ? r.pto.map(fmt).join(", ") : "None"],
+    ...(r.driver.length ? [["Driver score", r.driver.map((d) => (d.score == null ? `${d.week_label}: no activity` : `${d.week_label}: ${d.score}`)).join(" · ")] as [string, string]] : []),
   ];
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

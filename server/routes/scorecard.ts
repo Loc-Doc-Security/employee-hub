@@ -108,7 +108,14 @@ export function registerScorecardRoutes(app: express.Express, getAuthUser: GetAu
 
   const one = async (id: string, month: string) => {
     const oldest = monthsBack(month, HISTORY_MONTHS).pop()!;
-    return cardFor(id, await loadScoringData([id], oldest), month);
+    const card = cardFor(id, await loadScoringData([id], oldest), month);
+    // Driver scores: reference only, not part of the score (Levi, 2026-10-16).
+    const driver = (await getProductDb().query(
+      `SELECT r.week_label, d.score::float AS score, d.is_parked, r.fleet_score::float AS fleet_score
+         FROM employee_hub.driver_scores d JOIN employee_hub.driver_score_reports r ON r.id = d.report_id
+        WHERE d.employee_id = $1 AND r.week_start < ($2::date + interval '1 month') ORDER BY r.week_start DESC LIMIT 4`,
+      [id, `${month}-01`])).rows;
+    return { ...card, driver };
   };
 
   app.get("/api/scorecard/me", async (req, res) => {
