@@ -15,6 +15,7 @@ import { resolveCurrent, type GetAuthUser } from "../auth/currentEmployee";
 import { reach } from "../auth/permissions";
 import { registerMeRoutes } from "./me";
 import { registerWeeklyReportRoutes } from "./weeklyReports";
+import { registerPeerAssessmentRoutes } from "./peerAssessments";
 
 const send = (res: express.Response, data: unknown) => res.json({ ok: true, data });
 const fail = (res: express.Response, status: number, error: string) => res.status(status).json({ ok: false, error });
@@ -39,6 +40,7 @@ export function registerEmployeeRoutes(app: express.Express, getAuthUser: GetAut
   // server.ts calls only this function, so the app's other route groups hang off it.
   registerMeRoutes(app, getAuthUser);
   registerWeeklyReportRoutes(app, getAuthUser);
+  registerPeerAssessmentRoutes(app, getAuthUser);
 
   const withAccess = async (req: express.Request, res: express.Response) => {
     const current = await resolveCurrent(req, getAuthUser);

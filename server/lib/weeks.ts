@@ -19,3 +19,8 @@ export function mondayOf(date: string): string {
 export function currentWeekStart(now = new Date(), timeZone = COMPANY_TIME_ZONE): string {
   return mondayOf(localDate(now, timeZone));
 }
+
+/** First day (YYYY-MM-01) of the current month in the company's time zone. */
+export function currentMonthStart(now = new Date(), timeZone = COMPANY_TIME_ZONE): string {
+  return `${localDate(now, timeZone).slice(0, 7)}-01`;
+}
