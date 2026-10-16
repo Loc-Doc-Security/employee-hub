@@ -22,9 +22,9 @@ import { badgesFor, levelFor, quarterOf, scoreMonth, streak, type MonthScore } f
 const send = (res: express.Response, data: unknown) => res.json({ ok: true, data });
 const fail = (res: express.Response, status: number, error: string) => res.status(status).json({ ok: false, error });
 
-const HISTORY_MONTHS = 13; // enough for a year-long streak plus the current month
+export const HISTORY_MONTHS = 13; // enough for a year-long streak plus the current month
 
-function monthsBack(fromMonth: string, n: number): string[] {
+export function monthsBack(fromMonth: string, n: number): string[] {
   const out: string[] = [];
   const d = new Date(`${fromMonth}-01T12:00:00Z`);
   for (let i = 0; i < n; i++) {
@@ -34,14 +34,14 @@ function monthsBack(fromMonth: string, n: number): string[] {
   return out;
 }
 
-function monthParam(req: express.Request): string {
+export function monthParam(req: express.Request): string {
   const m = typeof req.query.month === "string" ? req.query.month.trim() : "";
   const now = currentMonthStart().slice(0, 7);
   return /^\d{4}-\d{2}$/.test(m) && m <= now ? m : now;
 }
 
 /** Everything needed to score these employees for the given months, in five queries. */
-async function loadScoringData(ids: string[], oldestMonth: string) {
+export async function loadScoringData(ids: string[], oldestMonth: string) {
   const db = getProductDb();
   const since = `${oldestMonth}-01`;
   const sinceWeek = new Date(`${since}T12:00:00Z`);
@@ -71,9 +71,9 @@ async function loadScoringData(ids: string[], oldestMonth: string) {
   };
 }
 
-type Data = Awaited<ReturnType<typeof loadScoringData>>;
+export type ScoringData = Awaited<ReturnType<typeof loadScoringData>>;
 
-function cardFor(id: string, data: Data, selected: string) {
+export function cardFor(id: string, data: ScoringData, selected: string) {
   const ctx = { currentMonday: currentWeekStart(), currentAuditWeek: auditWeekStart() };
   const weeklyWeeks = new Set((data.weekly.get(id) ?? []).map((r) => r.w as string));
   const ptoWeeks = new Set((data.pto.get(id) ?? []).map((r) => r.w as string));

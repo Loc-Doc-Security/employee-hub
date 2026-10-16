@@ -21,6 +21,7 @@ import { registerPtoRoutes } from "./pto";
 import { registerUploadRoutes } from "./uploads";
 import { registerOneOnOneRoutes } from "./oneOnOnes";
 import { registerScorecardRoutes } from "./scorecard";
+import { registerTeamReportRoutes } from "./teamReport";
 
 const send = (res: express.Response, data: unknown) => res.json({ ok: true, data });
 const fail = (res: express.Response, status: number, error: string) => res.status(status).json({ ok: false, error });
@@ -51,6 +52,7 @@ export function registerEmployeeRoutes(app: express.Express, getAuthUser: GetAut
   registerUploadRoutes(app, getAuthUser);
   registerOneOnOneRoutes(app, getAuthUser);
   registerScorecardRoutes(app, getAuthUser);
+  registerTeamReportRoutes(app, getAuthUser);
 
   const withAccess = async (req: express.Request, res: express.Response) => {
     const current = await resolveCurrent(req, getAuthUser);
