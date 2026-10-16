@@ -88,3 +88,12 @@ export async function loadAccess(db: pg.Pool, employeeId: string): Promise<Acces
   }));
   return { employeeId, companyId, grants };
 }
+
+/** True if the permission applies anywhere in the company: globally, company-wide, or for any one
+ * of its departments. For company-level features any manager may use (e.g. the Wednesday meeting),
+ * where a department-scoped role still counts. */
+export function canAnywhereIn(access: Access | null, permission: string, companyId: string): boolean {
+  if (!access) return false;
+  return access.grants.some((g) => g.permission === permission
+    && (g.scope.type === "global" || g.scope.companyId === companyId));
+}

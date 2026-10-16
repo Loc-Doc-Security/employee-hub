@@ -2,7 +2,7 @@
 // Run: npx tsx --test tests/*.test.ts
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { can, reach, type Access, type Grant } from "../server/auth/permissions";
+import { can, canAnywhereIn, reach, type Access, type Grant } from "../server/auth/permissions";
 
 const LOCDOC = "c-locdoc";
 const BUFFALO = "c-buffalo";
@@ -65,4 +65,12 @@ test("reach() summarizes scopes for list filtering", () => {
   assert.deepEqual(reach(superAdmin, "employees.view"), { all: true, companyIds: [], departmentIds: [] });
   assert.deepEqual(reach(serviceManager, "reports.view_team"), { all: false, companyIds: [], departmentIds: [SERVICE] });
   assert.deepEqual(reach(companyAdmin, "employees.view"), { all: false, companyIds: [LOCDOC], departmentIds: [] });
+});
+
+test("canAnywhereIn: a department-scoped role counts for company-level features, never across companies", () => {
+  const deptMgr = person(LOCDOC, [g("meetings.manage", { type: "department", companyId: LOCDOC, departmentId: SERVICE })]);
+  assert.equal(canAnywhereIn(deptMgr, "meetings.manage", LOCDOC), true);
+  assert.equal(canAnywhereIn(deptMgr, "meetings.manage", BUFFALO), false);
+  assert.equal(canAnywhereIn(superAdmin, "system.admin", BUFFALO), true);
+  assert.equal(canAnywhereIn(buffaloEmployee, "meetings.manage", BUFFALO), false);
 });

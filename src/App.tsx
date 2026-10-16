@@ -12,6 +12,7 @@ import CleanlinessReportPage from "./pages/CleanlinessReportPage";
 import OneOnOnePage from "./pages/OneOnOnePage";
 import MyScorePage from "./pages/MyScorePage";
 import TeamReportPage from "./pages/TeamReportPage";
+import WednesdayMeetingPage from "./pages/WednesdayMeetingPage";
 import { apiGet } from "./lib/api";
 import { HUB_APP_ID } from "./lib/brand";
 
@@ -44,7 +45,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/*" element={<RequireAuth><Routes><Route path="/" element={<AppShell />}><Route index element={<HomePage />} /><Route path="people" element={<PeoplePage />} /><Route path="weekly-report" element={<WeeklyReportPage />} /><Route path="peer-assessments" element={<PeerAssessmentPage />} /><Route path="cleanliness" element={<CleanlinessAuditPage />} /><Route path="cleanliness/report" element={<CleanlinessReportPage />} /><Route path="one-on-ones" element={<OneOnOnePage />} /><Route path="my-score" element={<MyScorePage />} /><Route path="team-report" element={<TeamReportPage />} /></Route></Routes></RequireAuth>} />
+          <Route path="/*" element={<RequireAuth><Routes><Route path="/" element={<AppShell />}><Route index element={<HomePage />} /><Route path="people" element={<PeoplePage />} /><Route path="weekly-report" element={<WeeklyReportPage />} /><Route path="peer-assessments" element={<PeerAssessmentPage />} /><Route path="cleanliness" element={<CleanlinessAuditPage />} /><Route path="cleanliness/report" element={<CleanlinessReportPage />} /><Route path="one-on-ones" element={<OneOnOnePage />} /><Route path="my-score" element={<MyScorePage />} /><Route path="team-report" element={<TeamReportPage />} /><Route path="wednesday-meeting" element={<WednesdayMeetingPage />} /></Route></Routes></RequireAuth>} />
         </Routes>
       </BrowserRouter>
     </AppProvider>

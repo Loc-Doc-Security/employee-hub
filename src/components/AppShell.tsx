@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { ClipboardCheck, ClipboardList, Home, LogOut, MessagesSquare, SprayCan, Star, Trophy, Users } from "lucide-react";
+import { CalendarDays, ClipboardCheck, ClipboardList, Home, LogOut, MessagesSquare, SprayCan, Star, Trophy, Users } from "lucide-react";
 import { useMe } from "../lib/hubApi";
 import { LabSideNav } from "lab-theme/LabSideNav";
 import HubBackLink from "./HubBackLink";
@@ -51,6 +51,7 @@ function TopNavLinks() {
 function SideShell({ side }: { side: "left" | "right" }) {
   const { me } = useMe();
   const canTeamReport = !!me?.permissions["reports.view_team"];
+  const canMeetings = !!me?.permissions["meetings.manage"];
   const header = (
     <>
       <div className="pb-2">
@@ -65,7 +66,7 @@ function SideShell({ side }: { side: "left" | "right" }) {
     <LabSideNav
       className={`w-64 shrink-0 self-stretch min-h-screen${side === "right" ? " lab-sidebar--right" : ""}`}
       header={header}
-      quickLinks={[{ to: "/", label: "Home", icon: Home }, { to: "/my-score", label: "My Score", icon: Trophy }, { to: "/people", label: "People", icon: Users }, { to: "/weekly-report", label: "Weekly Report", icon: ClipboardCheck }, { to: "/peer-assessments", label: "Peer Assessments", icon: Star }, { to: "/cleanliness", label: "Cleanliness Audit", icon: SprayCan }, { to: "/one-on-ones", label: "1:1s", icon: MessagesSquare }, { to: "/team-report", label: "Team Report", icon: ClipboardList, show: canTeamReport }]}
+      quickLinks={[{ to: "/", label: "Home", icon: Home }, { to: "/my-score", label: "My Score", icon: Trophy }, { to: "/people", label: "People", icon: Users }, { to: "/weekly-report", label: "Weekly Report", icon: ClipboardCheck }, { to: "/peer-assessments", label: "Peer Assessments", icon: Star }, { to: "/cleanliness", label: "Cleanliness Audit", icon: SprayCan }, { to: "/one-on-ones", label: "1:1s", icon: MessagesSquare }, { to: "/team-report", label: "Team Report", icon: ClipboardList, show: canTeamReport }, { to: "/wednesday-meeting", label: "Wednesday Meeting", icon: CalendarDays, show: canMeetings }]}
       sections={[]}
       footer={<><ViewAsPicker /><SignOutButton /></>}
     />
