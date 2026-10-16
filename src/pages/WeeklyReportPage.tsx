@@ -13,7 +13,7 @@ type Report = {
   week_high: string; week_low: string; additional_notes: string; submitted_at: string;
 };
 type Mine = { weekStart: string; current: Report | null; history: Report[] };
-type TeamRow = { id: string; name: string; departments: string; submitted: boolean };
+type TeamRow = { id: string; name: string; departments: string; submitted: boolean; on_pto: boolean };
 type AllRow = Report & { name: string; is_former: boolean };
 
 const SCALES = {
@@ -225,14 +225,14 @@ function TeamStatus({ initialWeek }: { initialWeek: string }) {
       {error && <div className="text-sm text-red-700">{error}</div>}
       {rows && (
         <div className="glass-card rounded-2xl overflow-x-auto">
-          <div className="p-3 text-sm font-semibold">{done} of {rows.length} submitted</div>
+          <div className="p-3 text-sm font-semibold">{done} of {rows.length - rows.filter((r) => r.on_pto && !r.submitted).length} submitted{rows.some((r) => r.on_pto && !r.submitted) ? ` · ${rows.filter((r) => r.on_pto && !r.submitted).length} on PTO` : ""}</div>
           <table className="w-full text-sm">
             <tbody>
               {rows.map((r) => (
                 <tr key={r.id} className="border-t border-slate-100">
                   <td className="p-3">{r.name}</td>
                   <td className="p-3 text-slate-500">{r.departments || "—"}</td>
-                  <td className="p-3">{r.submitted ? "✓ Submitted" : "— Not yet"}</td>
+                  <td className="p-3">{r.submitted ? "✓ Submitted" : r.on_pto ? "On PTO" : "— Not yet"}</td>
                 </tr>
               ))}
             </tbody>

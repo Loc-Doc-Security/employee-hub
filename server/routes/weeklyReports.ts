@@ -3,7 +3,7 @@
  *
  *   GET  /api/weekly-reports/mine   my current week (report or null) + my full history
  *   POST /api/weekly-reports        submit this week's report (once; no edits afterwards)
- *   GET  /api/weekly-reports/team   managers: who has / hasn't submitted for a week. NO answers.
+ *   GET  /api/weekly-reports/team   managers: who has / hasn't submitted (or is on PTO) for a week. NO answers.
  *   GET  /api/weekly-reports/all    C-Suite only (weekly_reports.read_all): everyone's answers
  *
  * The submitter and the week always come from the server (session + Eastern-time Monday), never
@@ -89,7 +89,9 @@ export function registerWeeklyReportRoutes(app: express.Express, getAuthUser: Ge
         `SELECT e.id, e.first_name || ' ' || e.last_name AS name,
                 coalesce((SELECT string_agg(d.name, ', ' ORDER BY d.name) FROM employee_hub.employee_departments ed
                           JOIN employee_hub.departments d ON d.id = ed.department_id WHERE ed.employee_id = e.id), '') AS departments,
-                EXISTS (SELECT 1 FROM employee_hub.weekly_reports w WHERE w.employee_id = e.id AND w.week_start = $1) AS submitted
+                EXISTS (SELECT 1 FROM employee_hub.weekly_reports w WHERE w.employee_id = e.id AND w.week_start = $1) AS submitted,
+                EXISTS (SELECT 1 FROM employee_hub.pto_weeks p
+                         WHERE p.employee_id = e.id AND p.week_start = $1 AND p.removed_at IS NULL) AS on_pto
            FROM employee_hub.employees e
           WHERE e.is_active AND ($2 OR e.company_id = ANY($3::uuid[])
                 OR EXISTS (SELECT 1 FROM employee_hub.employee_departments s

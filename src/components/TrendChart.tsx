@@ -1,4 +1,4 @@
-// One measure over time on a fixed scale (1–5 by default). Used as small multiples (one chart per measure)
+// One measure over time on a fixed scale (1–5 by default; min/max/ticks for others, e.g. 0–100). Used as small multiples (one chart per measure)
 // rather than three lines on one chart, because "higher" means different things per measure
 // (high morale = good, high stress = bad); each chart's title names its own direction.
 import { useMemo, useRef, useState } from "react";
@@ -10,15 +10,17 @@ const W = 640, H = 160, PAD = { l: 28, r: 12, t: 12, b: 24 };
 const fmtWeek = (w: string) =>
   new Date(`${w}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit", timeZone: "UTC" });
 
-export default function TrendChart({ title, hint, points, max = 5, formatLabel = fmtWeek }: {
-  title: string; hint: string; points: TrendPoint[]; max?: number; formatLabel?: (week: string) => string;
+export default function TrendChart({ title, hint, points, min = 1, max = 5, ticks, formatLabel = fmtWeek }: {
+  title: string; hint: string; points: TrendPoint[]; min?: number; max?: number; ticks?: number[];
+  formatLabel?: (week: string) => string;
 }) {
   const [hover, setHover] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const sorted = useMemo(() => [...points].sort((a, b) => a.week.localeCompare(b.week)), [points]);
 
   const x = (i: number) => PAD.l + (sorted.length <= 1 ? (W - PAD.l - PAD.r) / 2 : (i / (sorted.length - 1)) * (W - PAD.l - PAD.r));
-  const y = (v: number) => PAD.t + ((max - v) / (max - 1)) * (H - PAD.t - PAD.b);
+  const y = (v: number) => PAD.t + ((max - v) / (max - min)) * (H - PAD.t - PAD.b);
+  const gridValues = ticks ?? Array.from({ length: max - min + 1 }, (_, i) => min + i);
   const path = sorted.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p.value).toFixed(1)}`).join(" ");
   const avg = sorted.length ? sorted.reduce((s, p) => s + p.value, 0) / sorted.length : 0;
 
@@ -50,9 +52,9 @@ export default function TrendChart({ title, hint, points, max = 5, formatLabel =
         <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} className="w-full h-auto mt-2 touch-none"
              role="img" aria-label={`${title} over time, ${sorted.length} points, average ${avg.toFixed(1)}`}
              onPointerMove={onMove} onPointerLeave={() => setHover(null)}>
-          {Array.from({ length: max }, (_, i) => i + 1).map((v) => (
+          {gridValues.map((v) => (
             <g key={v}>
-              <line x1={PAD.l} x2={W - PAD.r} y1={y(v)} y2={y(v)} stroke="currentColor" className="text-slate-300" strokeOpacity={v === Math.ceil(max / 2) ? 0.9 : 0.45} strokeWidth={1} />
+              <line x1={PAD.l} x2={W - PAD.r} y1={y(v)} y2={y(v)} stroke="currentColor" className="text-slate-300" strokeOpacity={v === gridValues[Math.floor(gridValues.length / 2)] ? 0.9 : 0.45} strokeWidth={1} />
               <text x={PAD.l - 8} y={y(v) + 4} textAnchor="end" fontSize={11} className="fill-slate-500">{v}</text>
             </g>
           ))}

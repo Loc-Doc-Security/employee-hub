@@ -5,3 +5,4 @@ dist-server/
 !.env.example
 employee-hub-data.sqlite
 *.sqlite
+uploads/

@@ -55,3 +55,58 @@ export function useMe() {
   }, []);
   return { me, error };
 }
+
+export const hubPut = <T,>(url: string, body: unknown) =>
+  hubRequest<T>(url, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+export const hubDelete = <T,>(url: string, body: unknown) =>
+  hubRequest<T>(url, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+
+/** Uploads one image (already shrunk by the caller); retries a couple of times on network hiccups. */
+export async function hubUpload(blob: Blob, purpose: string, attempts = 3): Promise<string> {
+  let last: Error = new Error("Upload failed");
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const r = await hubRequest<{ id: string }>(`/api/uploads?purpose=${encodeURIComponent(purpose)}`, {
+        method: "POST", headers: { "Content-Type": blob.type || "image/jpeg" }, body: blob,
+      });
+      return r.id;
+    } catch (e) {
+      last = e as Error;
+      if (/isn't a JPEG|415|403|401/.test(last.message)) break; // not worth retrying
+      await new Promise((ok) => setTimeout(ok, 800 * (i + 1)));
+    }
+  }
+  throw last;
+}
+
+/** An uploaded image as an object URL. <img src> can't send the sign-in header, so fetch it. */
+export function useUploadUrl(id: string | null | undefined) {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!id) return;
+    let revoke: string | null = null;
+    const headers = new Headers();
+    const token = getAuthToken();
+    if (token) headers.set("Authorization", `Bearer ${token}`);
+    const viewAs = getViewAs();
+    if (viewAs) headers.set("x-view-as", viewAs);
+    fetch(`/api/uploads/${id}`, { headers })
+      .then((r) => (r.ok ? r.blob() : null))
+      .then((b) => { if (b) { revoke = URL.createObjectURL(b); setUrl(revoke); } })
+      .catch(() => setUrl(null));
+    return () => { if (revoke) URL.revokeObjectURL(revoke); };
+  }, [id]);
+  return url;
+}
+
+/** Shrinks a phone photo before upload: longest side ≤ maxSide, JPEG. */
+export async function shrinkImage(file: File, maxSide = 1600, quality = 0.82): Promise<Blob> {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  return new Promise((ok, no) => canvas.toBlob((b) => (b ? ok(b) : no(new Error("Could not process photo"))), "image/jpeg", quality));
+}
