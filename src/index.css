@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@import "lab-theme/lab-theme.css";
+@import "lab-theme/components.css";
+
+/* Right-edge sidebar: mirror border to the inner (left) edge */
+.lab-sidebar--right {
+  border-right: none;
+  border-left: 1px solid color-mix(in srgb, var(--theme-accent-600) 12%, transparent);
+}

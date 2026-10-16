@@ -1,0 +1,14 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "name": "Administrator",
+      "email": "admin@localhost",
+      "role": "ADMIN",
+      "active": true,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "authCredentials": {}
+}

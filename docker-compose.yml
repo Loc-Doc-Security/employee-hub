@@ -1,0 +1,13 @@
+services:
+  db:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: appdb
+    volumes:
+      - lab_pg_data:/var/lib/postgresql/data
+volumes:
+  lab_pg_data:

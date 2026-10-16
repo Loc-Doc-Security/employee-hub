@@ -1,0 +1,8 @@
+initialized=2026-10-15T17:53:29Z
+app_title=Employee Hub
+slug=employee-hub
+port=3010
+product_db=postgres
+integration=locdoc-platform
+nav=left
+destination=/Users/customerservice/Projects/employee-hub

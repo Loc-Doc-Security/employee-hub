@@ -1,0 +1,23 @@
+{
+  "name": "lab-theme",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./lab-theme.css": "./src/lab-theme.css",
+    "./components.css": "./src/components.css",
+    "./theme": "./src/theme.ts",
+    "./tokens": "./src/tokens.ts",
+    "./LabSideNav": "./src/LabSideNav.tsx",
+    "./HubBackLink": "./src/HubBackLink.tsx"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-router-dom": "^6.0.0 || ^7.0.0",
+    "lucide-react": ">=0.400.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "~5.8.2"
+  }
+}

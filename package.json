@@ -1,0 +1,52 @@
+{
+  "name": "employee-hub",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": "22.22.2"
+  },
+  "scripts": {
+    "dev": "PORT=3010 tsx watch server.ts",
+    "start": "node dist-server/server.mjs",
+    "build": "vite build && npm run build:server",
+    "build:server": "esbuild server.ts --bundle --platform=node --target=node22 --format=esm --outfile=dist-server/server.mjs --packages=external",
+    "build-ecr": "bash scripts/build-ecr-image.sh",
+    "push-aws": "bash scripts/push-aws.sh",
+    "lint": "tsc --noEmit",
+    "sync-theme": "bash scripts/sync-lab-theme.sh \"$(pwd)/vendor/lab-theme\"",
+    "dev:postgres": "PORT=3010 HUB_AUTH_ENABLED=1 HUB_JWT_SECRET=local-dev-hub-jwt-secret-change-me HUB_JWT_ISSUER=lab-hub HUB_APP_URL=http://localhost:3002 DATA_BACKEND=postgres EMPLOYEE_HUB_DB_SCHEMA=employee_hub DATABASE_URL=postgresql://lab:lab@127.0.0.1:5433/lab_platform tsx watch server.ts"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.3",
+    "pg": "^8.16.3",
+    "@aws-sdk/client-secrets-manager": "^3.1058.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.14",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "clsx": "^2.1.1",
+    "esbuild": "^0.25.0",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "lab-theme": "file:./vendor/lab-theme",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.14.2",
+    "socket.io-client": "^4.8.3",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0",
+    "@types/pg": "^8.15.5"
+  }
+}

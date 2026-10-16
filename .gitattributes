@@ -1,0 +1,12 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+*.sh text eol=lf
+*.command text eol=lf
+*.mjs text eol=lf
+*.js text eol=lf
+# Store Windows scripts with CRLF in the repo. GitHub zip downloads do not
+# apply eol conversion, and cmd.exe treats LF-only .bat files as one line.
+*.cmd -text
+*.bat -text
+*.ps1 -text
+*.exe binary

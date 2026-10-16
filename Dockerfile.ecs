@@ -1,0 +1,37 @@
+# Build on the host first: npm ci && npm run build && docker build -f Dockerfile.ecs ...
+# ECS: leave Command empty (uses CMD below) or set: node dist-server/server.mjs
+# ECS working directory must stay /app — do not set it to dist-server.
+
+FROM --platform=linux/amd64 node:22-bookworm-slim
+WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV AWS_REGION=us-east-1
+ENV AWS_DEFAULT_REGION=us-east-1
+ENV LAB_PLATFORM_SECRET_ARN=arn:aws:secretsmanager:us-east-1:323643917694:secret:Lab-Hub-Secrets-yALd4A
+ENV DATA_BACKEND=postgres
+ENV DATABASE_SSL=1
+ENV HUB_AUTH_ENABLED=1
+ENV HUB_AUTH_STRICT=1
+ENV HUB_JWT_ISSUER=lab-hub
+ENV HUB_APP_URL=https://lab-hub.locdoc.net
+ENV APP_URL=https://employee-hub.locdoc.net
+ENV EMPLOYEE_HUB_DB_SCHEMA=employee_hub
+ENV HUB_DB_SCHEMA=hub
+ENV LAB_COMPANY_ID=locdoc
+ENV HUB_COOKIE_DOMAIN=.locdoc.net
+ENV ALLOWED_EMAIL_DOMAINS=locdoc.net
+
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+COPY dist ./dist
+COPY dist-server ./dist-server
+# Older generated servers look for dist next to the bundle (__dirname). Keep a copy there.
+COPY dist ./dist-server/dist
+COPY server/data ./server/data
+COPY vendor/lab-theme ./vendor/lab-theme
+
+EXPOSE 3000
+
+CMD ["node", "dist-server/server.mjs"]

@@ -1,0 +1,18 @@
+---
+description: LocDoc company app from Lab_App_TEMPLATE
+alwaysApply: true
+---
+# Company app — LLM rules
+
+Built from `Lab_App_TEMPLATE` with LocDoc theme and standards.
+
+## Always do
+
+- Read `docs/LAB_STANDARDS.md` and `docs/NAMING.md`
+- Use `PRODUCT_NAME` from `src/lib/brand.ts` for UI titles
+- Keep `lab-theme` imports and app shell patterns
+- Prefer extending auth/theme bootstrap over rewriting it
+
+## Hub attach (ops)
+
+When ready, LocDoc ops can wire Hub JWT (`lab-hub` issuer, `hub_token` handoff, app id = your slug). Builders focus on product features in this repo.
