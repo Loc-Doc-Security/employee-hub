@@ -1,8 +1,9 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { Home, LogOut } from "lucide-react";
+import { ClipboardCheck, Home, LogOut, Users } from "lucide-react";
 import { LabSideNav } from "lab-theme/LabSideNav";
 import HubBackLink from "./HubBackLink";
 import LabLogo from "./LabLogo";
+import ViewAsPicker from "./ViewAsPicker";
 import { useApp } from "../context/AppContext";
 import { NAV_LAYOUT, PRODUCT_NAME } from "../lib/brand";
 
@@ -61,9 +62,9 @@ function SideShell({ side }: { side: "left" | "right" }) {
     <LabSideNav
       className={`w-64 shrink-0 self-stretch min-h-screen${side === "right" ? " lab-sidebar--right" : ""}`}
       header={header}
-      quickLinks={[{ to: "/", label: "Home", icon: Home }]}
+      quickLinks={[{ to: "/", label: "Home", icon: Home }, { to: "/people", label: "People", icon: Users }, { to: "/weekly-report", label: "Weekly Report", icon: ClipboardCheck }]}
       sections={[]}
-      footer={<SignOutButton />}
+      footer={<><ViewAsPicker /><SignOutButton /></>}
     />
   );
   return (

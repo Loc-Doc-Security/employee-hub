@@ -15,6 +15,7 @@ import { fetchDirectoryEntry } from "./server/directory/hubDirectoryClient";
 import { FARGATE_LISTEN_HOST, parseListenPort, validateSqlBackendEnv } from "./server/deployment/containerRuntime";
 import { loadPlatformSecrets } from "./server/platform/loadPlatformSecrets";
 import { applyLocdocPlatformEnv } from "./server/platform/applyPlatformEnv";
+import { registerEmployeeRoutes } from "./server/routes/employees";
 
 if (process.env.NODE_ENV !== "test") {
   dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
@@ -163,6 +164,8 @@ async function startServer() {
     if (token) authSessions.delete(token);
     return sendOk(res, { ok: true });
   });
+
+  registerEmployeeRoutes(app, getAuthUser);
 
   io.use((socket, next) => {
     const token =

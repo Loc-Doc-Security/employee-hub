@@ -4,6 +4,8 @@ import { AppProvider, useApp } from "./context/AppContext";
 import LoginPage from "./components/LoginPage";
 import AppShell from "./components/AppShell";
 import HomePage from "./components/HomePage";
+import PeoplePage from "./pages/PeoplePage";
+import WeeklyReportPage from "./pages/WeeklyReportPage";
 import { apiGet } from "./lib/api";
 import { HUB_APP_ID } from "./lib/brand";
 
@@ -36,7 +38,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/*" element={<RequireAuth><Routes><Route path="/" element={<AppShell />}><Route index element={<HomePage />} /></Route></Routes></RequireAuth>} />
+          <Route path="/*" element={<RequireAuth><Routes><Route path="/" element={<AppShell />}><Route index element={<HomePage />} /><Route path="people" element={<PeoplePage />} /><Route path="weekly-report" element={<WeeklyReportPage />} /></Route></Routes></RequireAuth>} />
         </Routes>
       </BrowserRouter>
     </AppProvider>
