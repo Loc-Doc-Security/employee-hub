@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { CalendarDays, ClipboardCheck, ClipboardList, CreditCard, Home, Lightbulb, LogOut, MessagesSquare, SprayCan, Star, Trophy, Truck, Users } from "lucide-react";
+import { CalendarDays, ClipboardCheck, ClipboardList, CreditCard, Home, Lightbulb, LogOut, MessagesSquare, ShieldCheck, SprayCan, Star, Trophy, Truck, Users } from "lucide-react";
 import { useMe } from "../lib/hubApi";
 import { LabSideNav } from "lab-theme/LabSideNav";
 import HubBackLink from "./HubBackLink";
@@ -53,6 +53,7 @@ function SideShell({ side }: { side: "left" | "right" }) {
   const canTeamReport = !!me?.permissions["reports.view_team"];
   const canMeetings = !!me?.permissions["meetings.manage"];
   const canDriverScorecard = !!me?.permissions["driver_scorecard.upload"];
+  const canAdmin = !!me?.permissions["employees.manage"];
   const header = (
     <>
       <div className="pb-2">
@@ -67,7 +68,7 @@ function SideShell({ side }: { side: "left" | "right" }) {
     <LabSideNav
       className={`w-64 shrink-0 self-stretch min-h-screen${side === "right" ? " lab-sidebar--right" : ""}`}
       header={header}
-      quickLinks={[{ to: "/", label: "Home", icon: Home }, { to: "/my-score", label: "My Score", icon: Trophy }, { to: "/people", label: "People", icon: Users }, { to: "/weekly-report", label: "Weekly Report", icon: ClipboardCheck }, { to: "/peer-assessments", label: "Peer Assessments", icon: Star }, { to: "/cleanliness", label: "Cleanliness Audit", icon: SprayCan }, { to: "/one-on-ones", label: "1:1s", icon: MessagesSquare }, { to: "/tech-spotlight", label: "Tech Spotlight", icon: Lightbulb }, { to: "/credit-card", label: "Credit Card Receipts", icon: CreditCard }, { to: "/team-report", label: "Team Report", icon: ClipboardList, show: canTeamReport }, { to: "/wednesday-meeting", label: "Wednesday Meeting", icon: CalendarDays, show: canMeetings }, { to: "/driver-scorecard", label: "Driver Scorecard", icon: Truck, show: canDriverScorecard }]}
+      quickLinks={[{ to: "/", label: "Home", icon: Home }, { to: "/my-score", label: "My Score", icon: Trophy }, { to: "/people", label: "People", icon: Users }, { to: "/weekly-report", label: "Weekly Report", icon: ClipboardCheck }, { to: "/peer-assessments", label: "Peer Assessments", icon: Star }, { to: "/cleanliness", label: "Cleanliness Audit", icon: SprayCan }, { to: "/one-on-ones", label: "1:1s", icon: MessagesSquare }, { to: "/tech-spotlight", label: "Tech Spotlight", icon: Lightbulb }, { to: "/credit-card", label: "Credit Card Receipts", icon: CreditCard }, { to: "/team-report", label: "Team Report", icon: ClipboardList, show: canTeamReport }, { to: "/wednesday-meeting", label: "Wednesday Meeting", icon: CalendarDays, show: canMeetings }, { to: "/driver-scorecard", label: "Driver Scorecard", icon: Truck, show: canDriverScorecard }, { to: "/admin", label: "Admin", icon: ShieldCheck, show: canAdmin }]}
       sections={[]}
       footer={<><ViewAsPicker /><SignOutButton /></>}
     />

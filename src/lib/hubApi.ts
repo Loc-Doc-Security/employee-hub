@@ -58,6 +58,8 @@ export function useMe() {
 
 export const hubPut = <T,>(url: string, body: unknown) =>
   hubRequest<T>(url, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+export const hubPatch = <T,>(url: string, body: unknown) =>
+  hubRequest<T>(url, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
 export const hubDelete = <T,>(url: string, body: unknown) =>
   hubRequest<T>(url, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
 

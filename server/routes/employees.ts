@@ -26,6 +26,7 @@ import { registerMeetingRoutes } from "./meetings";
 import { registerSpotlightRoutes } from "./spotlights";
 import { registerDriverScorecardRoutes } from "./driverScorecard";
 import { registerCreditCardRoutes } from "./creditCard";
+import { registerAdminRoutes } from "./admin";
 
 const send = (res: express.Response, data: unknown) => res.json({ ok: true, data });
 const fail = (res: express.Response, status: number, error: string) => res.status(status).json({ ok: false, error });
@@ -61,6 +62,7 @@ export function registerEmployeeRoutes(app: express.Express, getAuthUser: GetAut
   registerSpotlightRoutes(app, getAuthUser);
   registerDriverScorecardRoutes(app, getAuthUser);
   registerCreditCardRoutes(app, getAuthUser);
+  registerAdminRoutes(app, getAuthUser);
 
   const withAccess = async (req: express.Request, res: express.Response) => {
     const current = await resolveCurrent(req, getAuthUser);
