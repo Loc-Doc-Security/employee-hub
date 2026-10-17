@@ -1,8 +1,10 @@
-// Wednesday Meeting (managers, C-Suite, admins). For now the Schedule tab: each meeting's topic,
-// presenting tech (picked from the employee list, never typed) and presentation link. The deck
-// tabs (Agenda, Tech Spotlight, Reports, Team Culture, presenter mode) are added here later.
+// Wednesday Meeting (managers, C-Suite, admins).
+//   Meeting deck   the slides presented on the TV (components/MeetingDeck.tsx)
+//   Schedule       each meeting's topic, presenting tech (picked from the employee list, never typed)
+//                  and presentation link
 import { useEffect, useState } from "react";
 import { hubGet, hubPut } from "../lib/hubApi";
+import MeetingDeck from "../components/MeetingDeck";
 
 type Meeting = {
   id: string; date: string; topic: string; presenter_id: string | null; presenter: string | null;
@@ -112,13 +114,17 @@ function Schedule() {
 }
 
 export default function WednesdayMeetingPage() {
+  const [tab, setTab] = useState<"deck" | "schedule">("deck");
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">Wednesday Meeting</h1>
       <div className="flex gap-2" role="tablist">
-        <button type="button" role="tab" aria-selected className="rounded-xl border px-4 py-2 text-sm font-semibold btn-brand">Schedule</button>
+        {([["deck", "Meeting deck"], ["schedule", "Schedule"]] as const).map(([k, n]) => (
+          <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
+            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === k ? "btn-brand" : "border-slate-200 bg-white/70"}`}>{n}</button>
+        ))}
       </div>
-      <Schedule />
+      {tab === "deck" ? <MeetingDeck /> : <Schedule />}
     </div>
   );
 }
