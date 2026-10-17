@@ -28,10 +28,10 @@ import type express from "express";
 import type pg from "pg";
 import { getProductDb } from "../db/client";
 import { resolveCurrent, type GetAuthUser } from "../auth/currentEmployee";
-import { canAnywhereIn, type Access } from "../auth/permissions";
+import { canAnywhereIn, reach, type Access } from "../auth/permissions";
 import { balanceOf, post, runPointRules } from "../lib/points";
 import { localDate } from "../lib/weeks";
-import { STATUS, displayStatus, needsPricingConfirmation, priceLine, validateLine } from "../lib/shopPricing";
+import { STATUS, displayStatus, hasLogoCharge, needsPricingConfirmation, priceLine, validateLine } from "../lib/shopPricing";
 
 const send = (res: express.Response, data: unknown) => res.json({ ok: true, data });
 const fail = (res: express.Response, status: number, error: string) => res.status(status).json({ ok: false, error });
@@ -51,7 +51,7 @@ type Line = Record<string, any> & { source: "uniform" | "sanmar" | "amazon" };
 type CatalogItem = { id: string; name: string; price: string; options: { label: string; choices: string[] }[]; is_visible: boolean };
 
 /** Validates and prices cart lines against the real catalog. Uniform prices come from the database. */
-async function priceCart(db: pg.Pool | pg.PoolClient, raw: unknown) {
+async function priceCart(db: pg.Pool | pg.PoolClient, raw: unknown, canNoLogo = false) {
   if (!Array.isArray(raw) || !raw.length) throw new Error("The cart is empty.");
   if (raw.length > 50) throw new Error("That's too many lines for one cart.");
   const ids = raw.map((l: Line) => l?.productId).filter((id: unknown) => typeof id === "string" && UUID.test(id as string));
@@ -71,6 +71,8 @@ async function priceCart(db: pg.Pool | pg.PoolClient, raw: unknown) {
       line = { ...input, unitPrice: Number(item.price), price: Number(item.price), optionLabels: item.options.map((o) => o.label), name: item.name };
       if (!item.options.length) line.optionLabels = ["Item"], line.selectedOptions = { Item: item.name };
     }
+    // A blank garment (no logo) is for Operations only (unchanged from Wix, now enforced here too).
+    if (source === "sanmar" && !hasLogoCharge(line.logo) && !canNoLogo) throw new Error(`Line ${i + 1}: pick a logo.`);
     const problem = validateLine(line);
     if (problem) throw new Error(`Line ${i + 1}: ${problem}`);
     return { line, priced: priceLine(line) as { unitPrice: number; quantity: number; total: number; clothingPrice?: number; logoPricePerUnit?: number; placementPricePerUnit?: number } };
@@ -109,6 +111,8 @@ export function registerShopRoutes(app: express.Express, getAuthUser: GetAuthUse
     if (permission && !canAnywhereIn(access, permission, access.companyId)) return void fail(res, 403, permission === "points.manage" ? "Shop Admins only (points)" : "Shop Admins only");
     return access;
   };
+  // "Operations" = a company-wide team-report grant (company-scope manager, C-Suite, admins).
+  const canNoLogo = (access: Access) => { const r = reach(access, "reports.view_team"); return r.all || r.companyIds.includes(access.companyId); };
   const allowedTypes = (access: Access) => Object.entries(TYPE_PERMISSION).filter(([, p]) => canAnywhereIn(access, p, access.companyId)).map(([t]) => t);
 
   // Automatic point rules: hourly, plus shortly after start-up. Idempotent, so overlapping runs or
@@ -128,7 +132,7 @@ export function registerShopRoutes(app: express.Express, getAuthUser: GetAuthUse
       const orders = (await db.query(`SELECT ${ORDER_COLUMNS} FROM employee_hub.orders o WHERE o.employee_id = $1 AND NOT o.is_stock_order ORDER BY o.ordered_at DESC LIMIT 100`, [access.employeeId])).rows;
       send(res, {
         catalog, balance: await balanceOf(db, access.employeeId), allowedTypes: allowedTypes(access), orders: withStatusName(orders),
-        isShopAdmin: canAnywhereIn(access, "shop.admin", access.companyId), canManagePoints: canAnywhereIn(access, "points.manage", access.companyId),
+        isShopAdmin: canAnywhereIn(access, "shop.admin", access.companyId), canNoLogo: canNoLogo(access), canManagePoints: canAnywhereIn(access, "points.manage", access.companyId),
       });
     } catch (err) {
       fail(res, 500, `Could not load the shop: ${(err as Error).message}`);
@@ -139,7 +143,7 @@ export function registerShopRoutes(app: express.Express, getAuthUser: GetAuthUse
     try {
       const access = await me(req, res);
       if (!access) return;
-      const priced = await priceCart(getProductDb(), req.body?.lines);
+      const priced = await priceCart(getProductDb(), req.body?.lines, canNoLogo(access));
       const total = Math.round(priced.reduce((s, x) => s + x.priced.total, 0) * 100) / 100;
       send(res, { lines: priced.map((x) => x.priced), total, points: Math.round(total), balance: await balanceOf(getProductDb(), access.employeeId) });
     } catch (err) {
@@ -153,7 +157,7 @@ export function registerShopRoutes(app: express.Express, getAuthUser: GetAuthUse
     try {
       const access = await me(req, res);
       if (!access) return;
-      const priced = await priceCart(client, req.body?.lines);
+      const priced = await priceCart(client, req.body?.lines, canNoLogo(access));
       const allowed = allowedTypes(access);
       const blocked = priced.find((x) => !allowed.includes(x.line.source));
       if (blocked) return void fail(res, 403, `You can't order ${blocked.line.source === "uniform" ? "uniform" : blocked.line.source === "sanmar" ? "SanMar" : "Amazon"} items.`);
@@ -338,7 +342,7 @@ export function registerShopRoutes(app: express.Express, getAuthUser: GetAuthUse
     try {
       const access = await me(req, res, "shop.admin");
       if (!access) return;
-      const priced = await priceCart(client, req.body?.lines);
+      const priced = await priceCart(client, req.body?.lines, true);
       await client.query("BEGIN");
       const byType = new Map<string, typeof priced>();
       for (const x of priced) byType.set(x.line.source, [...(byType.get(x.line.source) ?? []), x]);
