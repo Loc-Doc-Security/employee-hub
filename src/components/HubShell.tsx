@@ -121,7 +121,7 @@ export default function HubShell({ side = "left", footer }: { side?: "left" | "r
       <div className={`hidden md:block shrink-0 hub-nav-spacer${pinned ? " hub-nav-spacer--wide" : ""}`}>
         <div className={side === "right" ? "hub-fixed-right" : "hub-fixed-left"}>{pinned ? panel("pinned") : rail}</div>
       </div>
-      <main className="min-w-0 flex-1 p-4 md:p-8">
+      <main className="min-w-0 flex-1 p-4 pb-[calc(2.5rem+env(safe-area-inset-bottom))] md:p-8">
         <div className="max-w-7xl mx-auto">
           <Outlet />
         </div>

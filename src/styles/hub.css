@@ -157,3 +157,11 @@
 .hub-fixed-left, .hub-fixed-right { position: fixed; top: 0; bottom: 0; z-index: 30; }
 .hub-fixed-left { left: 0; }
 .hub-fixed-right { right: 0; }
+
+/* (Outside the layer: must beat the theme.) OMST sets overflow-x: hidden on html, body and #root.
+   That turns each into its own scroll box sized to 100vh, and on phones 100vh includes the area
+   behind the browser toolbar, so the bottom of a page couldn't be scrolled into view (Levi,
+   2026-10-19: Home stopped at Manager). overflow-x: clip hides sideways overflow the same way
+   without creating a scroll box, so the page scrolls normally. Only while the hub app is shown. */
+html:has(.hub-shell), html:has(.hub-shell) body, html:has(.hub-shell) #root { overflow-x: clip; }
+
