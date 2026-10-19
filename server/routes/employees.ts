@@ -31,6 +31,7 @@ import { registerShopRoutes } from "./shop";
 import { registerResourceRoutes } from "./resources";
 import { registerHomeRoutes } from "./home";
 import { registerBonusRoutes } from "./bonus";
+import { registerCalendarRoutes } from "./calendar";
 
 const send = (res: express.Response, data: unknown) => res.json({ ok: true, data });
 const fail = (res: express.Response, status: number, error: string) => res.status(status).json({ ok: false, error });
@@ -71,6 +72,7 @@ export function registerEmployeeRoutes(app: express.Express, getAuthUser: GetAut
   registerResourceRoutes(app, getAuthUser);
   registerHomeRoutes(app, getAuthUser);
   registerBonusRoutes(app, getAuthUser);
+  registerCalendarRoutes(app, getAuthUser);
 
   const withAccess = async (req: express.Request, res: express.Response) => {
     const current = await resolveCurrent(req, getAuthUser);
