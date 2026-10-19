@@ -21,6 +21,7 @@ import ShopPage from "./pages/ShopPage";
 import ShopAdminPage from "./pages/ShopAdminPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import ResourceViewPage from "./pages/ResourceViewPage";
+import BonusPage from "./pages/BonusPage";
 import { apiGet } from "./lib/api";
 import { HUB_APP_ID } from "./lib/brand";
 
@@ -53,7 +54,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/*" element={<RequireAuth><Routes><Route path="/" element={<AppShell />}><Route index element={<HomePage />} /><Route path="people" element={<PeoplePage />} /><Route path="weekly-report" element={<WeeklyReportPage />} /><Route path="peer-assessments" element={<PeerAssessmentPage />} /><Route path="cleanliness" element={<CleanlinessAuditPage />} /><Route path="cleanliness/report" element={<CleanlinessReportPage />} /><Route path="one-on-ones" element={<OneOnOnePage />} /><Route path="my-score" element={<MyScorePage />} /><Route path="team-report" element={<TeamReportPage />} /><Route path="wednesday-meeting" element={<WednesdayMeetingPage />} /><Route path="tech-spotlight" element={<TechSpotlightPage />} /><Route path="driver-scorecard" element={<DriverScorecardPage />} /><Route path="credit-card" element={<CreditCardPage />} /><Route path="admin" element={<AdminPage />} /><Route path="shop" element={<ShopPage />} /><Route path="shop-admin" element={<ShopAdminPage />} /><Route path="resources" element={<ResourcesPage />} /><Route path="resources/:slug" element={<ResourceViewPage />} /></Route></Routes></RequireAuth>} />
+          <Route path="/*" element={<RequireAuth><Routes><Route path="/" element={<AppShell />}><Route index element={<HomePage />} /><Route path="people" element={<PeoplePage />} /><Route path="weekly-report" element={<WeeklyReportPage />} /><Route path="peer-assessments" element={<PeerAssessmentPage />} /><Route path="cleanliness" element={<CleanlinessAuditPage />} /><Route path="cleanliness/report" element={<CleanlinessReportPage />} /><Route path="one-on-ones" element={<OneOnOnePage />} /><Route path="my-score" element={<MyScorePage />} /><Route path="team-report" element={<TeamReportPage />} /><Route path="wednesday-meeting" element={<WednesdayMeetingPage />} /><Route path="tech-spotlight" element={<TechSpotlightPage />} /><Route path="driver-scorecard" element={<DriverScorecardPage />} /><Route path="credit-card" element={<CreditCardPage />} /><Route path="admin" element={<AdminPage />} /><Route path="shop" element={<ShopPage />} /><Route path="shop-admin" element={<ShopAdminPage />} /><Route path="resources" element={<ResourcesPage />} /><Route path="resources/:slug" element={<ResourceViewPage />} /><Route path="bonus" element={<BonusPage />} /></Route></Routes></RequireAuth>} />
         </Routes>
       </BrowserRouter>
     </AppProvider>
