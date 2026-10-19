@@ -7,6 +7,7 @@
 // No edits after saving. Employees don't reply here; the Weekly Report is their channel.
 import { useEffect, useState } from "react";
 import { hubGet, hubPost, useMe } from "../lib/hubApi";
+import PageTitle from "../components/PageTitle";
 
 type RosterRow = { id: string; name: string; departments: string; done_this_month: boolean; last_met_on: string | null; canWrite: boolean };
 type Meeting = {
@@ -249,7 +250,7 @@ export default function OneOnOnePage() {
   const active = tab ?? (canTeam ? "team" : "mine");
   return (
     <div className="space-y-4">
-      <h1 className="text-3xl font-bold">1:1s</h1>
+      <PageTitle title="1:1s" />
       {canTeam && (
         <div className="flex gap-2" role="tablist">
           {([["team", "My team"], ["mine", "My 1:1s"]] as const).map(([key, name]) => (

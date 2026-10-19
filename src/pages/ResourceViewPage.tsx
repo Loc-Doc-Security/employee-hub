@@ -39,10 +39,10 @@ export default function ResourceViewPage() {
     <div className="space-y-4">
       {back}
       <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div className="flex gap-3 min-w-0">
-          <span className="mt-2 text-slate-500"><ResourceIcon r={r} className="w-6 h-6" /></span>
+        <div className="hub-page-header">
+          <span className="hub-icon-chip"><ResourceIcon r={r} /></span>
           <div className="min-w-0">
-            <h1 className="text-3xl font-bold">{r.title}</h1>
+            <h1>{r.title}</h1>
             <p className="text-sm text-slate-500">{r.category} · updated {new Date(r.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}{r.scope === "oms" ? " · OMS-wide" : ""}</p>
             {r.description && <p className="text-sm text-slate-400 mt-1">{r.description}</p>}
           </div>

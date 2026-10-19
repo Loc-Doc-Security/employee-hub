@@ -2,6 +2,7 @@
 // Companies tab: super admin only. Every change is in the Activity tab.
 import { useEffect, useMemo, useState } from "react";
 import { hubDelete, hubGet, hubPatch, hubPost } from "../lib/hubApi";
+import PageTitle from "../components/PageTitle";
 
 type Role = { id: string; role: string; roleName: string; scope: "company" | "department" | "global"; departmentId: string | null; department: string | null; source: string };
 type Person = {
@@ -262,7 +263,7 @@ export default function AdminPage() {
   const tabs: [typeof tab, string][] = [["people", "People"], ["org", "Departments & branches"], ["activity", "Activity"], ...(opts.canAddCompany ? [["companies", "Companies"] as [typeof tab, string]] : [])];
   return (
     <div className="space-y-4">
-      <h1 className="text-3xl font-bold">Admin</h1>
+      <PageTitle title="Admin" />
       <div className="flex gap-2 flex-wrap" role="tablist">
         {tabs.map(([k, n]) => (
           <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}

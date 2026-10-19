@@ -5,6 +5,7 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { hubDelete, hubGet, hubPost, useUploadUrl } from "../lib/hubApi";
 import TrendChart from "../components/TrendChart";
+import PageTitle from "../components/PageTitle";
 
 type Person = {
   id: string; name: string; branch: string | null; departments: string; vehicle_number: string | null; has_office: boolean;
@@ -71,15 +72,14 @@ export default function CleanlinessReportPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold">Cleanliness Report</h1>
+        <PageTitle title="Cleanliness Report">
           <div className="flex items-center gap-2 text-sm mt-1">
             <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" onClick={() => void load(shift(week, -1))}>← Prev</button>
             <span className="font-semibold">Week of {fmt(week)}</span>
             <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" disabled={week >= data.currentWeek}
               onClick={() => void load(shift(week, 1))}>Next →</button>
           </div>
-        </div>
+        </PageTitle>
         <Link to="/cleanliness" className="rounded-xl border border-slate-600 px-4 py-2 text-sm">My audit</Link>
       </div>
 

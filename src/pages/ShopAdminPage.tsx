@@ -7,6 +7,7 @@
 import { useEffect, useState } from "react";
 import { hubGet, hubPatch, hubPost, hubUpload, shrinkImage, useUploadUrl } from "../lib/hubApi";
 import { OrderCard } from "./ShopPage";
+import PageTitle from "../components/PageTitle";
 
 type Order = Parameters<typeof OrderCard>[0]["o"] & { customer_name: string; is_stock_order: boolean; pricing_confirmed: boolean; admin_notes: string;
   items: (Parameters<typeof OrderCard>[0]["o"]["items"][number] & { branding?: { clothingPrice?: number } })[] };
@@ -251,7 +252,7 @@ export default function ShopAdminPage() {
   const [tab, setTab] = useState<"orders" | "catalog" | "points" | "rules">("orders");
   return (
     <div className="space-y-4">
-      <h1 className="text-3xl font-bold">Shop Admin</h1>
+      <PageTitle title="Shop Admin" />
       <div className="flex gap-2 flex-wrap" role="tablist">
         {([["orders", "Orders"], ["catalog", "Catalog"], ["points", "Points"], ["rules", "Point rules"]] as const).map(([k, n]) => (
           <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}

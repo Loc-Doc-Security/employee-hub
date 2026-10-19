@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { hubGet, hubPut, hubUpload, shrinkImage, useMe, useUploadUrl } from "../lib/hubApi";
+import PageTitle from "../components/PageTitle";
 
 type Item = { key: string; label: string };
 type Section = { title: string; checklist: readonly Item[]; photos: readonly Item[] };
@@ -151,10 +152,9 @@ export default function CleanlinessAuditPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold">Cleanliness Audit</h1>
-          <p className="text-sm text-slate-500">Week of {weekLabel(form.week)}{form.editingFor ? ` · for ${form.editingFor.name}` : ""}</p>
-        </div>
+        <PageTitle title="Cleanliness Audit">
+          Week of {weekLabel(form.week)}{form.editingFor ? ` · for ${form.editingFor.name}` : ""}
+        </PageTitle>
         <div className="flex gap-2 flex-wrap">
           {canViewReport && <Link to="/cleanliness/report" className="rounded-xl border border-slate-600 px-4 py-2 text-sm">Cleanliness Report</Link>}
           <button type="button" className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-600" disabled

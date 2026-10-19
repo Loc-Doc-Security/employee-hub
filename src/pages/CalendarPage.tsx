@@ -5,6 +5,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { hubDelete, hubGet, hubPost, hubPut } from "../lib/hubApi";
+import PageTitle from "../components/PageTitle";
 
 type Kind = "holiday" | "event" | "meeting" | "pto" | "birthday" | "anniversary";
 type Item = { id: string; kind: Kind; title: string; start: string; end: string; time?: string | null; endTime?: string | null;
@@ -258,10 +259,9 @@ export default function CalendarPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold">Calendar</h1>
-          <p className="text-sm text-slate-500">Holidays, events, Wednesday meetings, who's out, birthdays and work anniversaries.</p>
-        </div>
+        <PageTitle title="Calendar">
+          Holidays, events, Wednesday meetings, who's out, birthdays and work anniversaries.
+        </PageTitle>
         <div className="flex gap-2" role="tablist">
           {tabs.map(([k, n]) => (
             <button key={k} type="button" role="tab" aria-selected={view === k} onClick={() => setView(k)}

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { hubGet } from "../lib/hubApi";
+import PageTitle from "../components/PageTitle";
 
 type Org = {
   companies: { id: string; name: string }[];
@@ -63,10 +64,9 @@ export default function PeoplePage() {
   return (
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-4 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold">People</h1>
-          <p className="text-sm text-slate-400">{loading ? "Loading…" : `${shown.length} shown`}</p>
-        </div>
+        <PageTitle title="People">
+          {loading ? "Loading…" : `${shown.length} shown`}
+        </PageTitle>
         <div className="flex gap-2 flex-wrap">
           <input
             className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm"

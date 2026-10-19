@@ -7,6 +7,7 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { hubGet, hubPost, useMe } from "../lib/hubApi";
 import TrendChart from "../components/TrendChart";
+import PageTitle from "../components/PageTitle";
 
 type Report = {
   id: string; week_start: string; stress_level: number; morale: number; workload: number;
@@ -287,7 +288,7 @@ export default function WeeklyReportPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-3xl font-bold">Weekly Report</h1>
+      <PageTitle title="Weekly Report" />
       <div className="flex gap-2 flex-wrap" role="tablist">
         {tabs.map(([key, name]) => (
           <button key={key} type="button" role="tab" aria-selected={tab === key}

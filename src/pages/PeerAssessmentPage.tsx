@@ -7,6 +7,7 @@
 import { useEffect, useState } from "react";
 import { hubGet, hubPost, useMe } from "../lib/hubApi";
 import TrendChart from "../components/TrendChart";
+import PageTitle from "../components/PageTitle";
 
 const CRITERIA = [
   { key: "humble", label: "Humble", desc: "Acknowledges mistakes, accepts feedback, doesn't seek undue credit" },
@@ -330,7 +331,7 @@ export default function PeerAssessmentPage() {
   ];
   return (
     <div className="space-y-4">
-      <h1 className="text-3xl font-bold">Peer Assessments</h1>
+      <PageTitle title="Peer Assessments" />
       <div className="flex gap-2 flex-wrap" role="tablist">
         {tabs.map(([key, name]) => (
           <button key={key} type="button" role="tab" aria-selected={tab === key}

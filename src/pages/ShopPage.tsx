@@ -3,6 +3,7 @@
 // catalog) when the cart is quoted or placed. Shop Admins also get "place as stock order".
 import { useEffect, useMemo, useState } from "react";
 import { hubGet, hubPost, useUploadUrl } from "../lib/hubApi";
+import PageTitle from "../components/PageTitle";
 
 type CatalogItem = { id: string; name: string; price: number; image_upload_id: string | null; options: { label: string; choices: string[] }[] };
 type OrderItem = { id: string; name: string; sku: string; link: string | null; quantity: number; unitPrice: number; total: number; options: Record<string, string>; branding?: { clothingPrice?: number } };
@@ -174,7 +175,7 @@ export default function ShopPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-3 flex-wrap">
-        <h1 className="text-3xl font-bold">Shop</h1>
+        <PageTitle title="Shop" />
         <div className="text-sm">Balance <span className="text-2xl font-black">{data.balance}</span> points</div>
       </div>
       <div className="flex gap-2 flex-wrap" role="tablist">

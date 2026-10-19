@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getAuthToken } from "../lib/authToken";
 import { getViewAs, hubGet } from "../lib/hubApi";
+import PageTitle from "../components/PageTitle";
 
 type Week = { week_start: string; week_label: string; fleet_score: number | null; uploaded_by: string | null };
 type Row = {
@@ -111,7 +112,7 @@ export default function DriverScorecardPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-3xl font-bold">Driver Scorecard</h1>
+      <PageTitle title="Driver Scorecard" />
       <div className="glass-card rounded-2xl p-6 space-y-3">
         <div className="font-semibold">Upload this week's Geotab scorecard</div>
         <div className="text-sm text-slate-500">The "Driver Safety Scorecard (Expanded)" PDF. Uploading a week that's already here replaces it.</div>

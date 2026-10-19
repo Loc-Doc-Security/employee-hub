@@ -5,6 +5,7 @@
 import { useEffect, useState } from "react";
 import { hubGet, hubPut } from "../lib/hubApi";
 import MeetingDeck from "../components/MeetingDeck";
+import PageTitle from "../components/PageTitle";
 
 type Meeting = {
   id: string; date: string; topic: string; presenter_id: string | null; presenter: string | null;
@@ -117,7 +118,7 @@ export default function WednesdayMeetingPage() {
   const [tab, setTab] = useState<"deck" | "schedule">("deck");
   return (
     <div className="space-y-4">
-      <h1 className="text-3xl font-bold">Wednesday Meeting</h1>
+      <PageTitle title="Wednesday Meeting" />
       <div className="flex gap-2" role="tablist">
         {([["deck", "Meeting deck"], ["schedule", "Schedule"]] as const).map(([k, n]) => (
           <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}

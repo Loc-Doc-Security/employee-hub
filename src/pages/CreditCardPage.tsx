@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { hubGet, hubPost, hubPut, useMe } from "../lib/hubApi";
 import TrendChart from "../components/TrendChart";
+import PageTitle from "../components/PageTitle";
 
 type Dept = { department: string; purchases: number; receipts: number; people: number; percent: number | null };
 type Report = {
@@ -132,10 +133,9 @@ function Report() {
   return (
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold">Credit Card Receipts</h1>
-          <p className="text-sm text-slate-500">Receipts uploaded vs. card purchases over the last 28 days, as of the week of {fmt(data.week)}.</p>
-        </div>
+        <PageTitle title="Credit Card Receipts">
+          Receipts uploaded vs. card purchases over the last 28 days, as of the week of {fmt(data.week)}.
+        </PageTitle>
         {data.weeks.length > 1 && (
           <select className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" value={data.week} onChange={(e) => setWeek(e.target.value)}>
             {data.weeks.map((w) => <option key={w} value={w}>Week of {fmt(w)}</option>)}

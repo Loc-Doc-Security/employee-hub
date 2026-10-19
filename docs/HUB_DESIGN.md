@@ -37,7 +37,7 @@ The OMST theme (`vendor/lab-theme`) is the umbrella. The hub adds a layer undern
 | `hub-section-title` | Small uppercase label with a rule, above a group |
 | `hub-icon-chip` (`--sm`, `--lg`) | Green-tinted square behind a lucide icon |
 | `hub-tiles` + `hub-tile` + `hub-tile__name` | Icon-forward tool tiles that lift on hover |
-| `hub-page-header` | Icon chip + title + one-line description |
+| `hub-page-header` | Icon chip + title + one-line description. Use the `PageTitle` component (`src/components/PageTitle.tsx`): it takes the page's icon from `nav.ts`, so the title matches its tile |
 
 ## Navigation
 

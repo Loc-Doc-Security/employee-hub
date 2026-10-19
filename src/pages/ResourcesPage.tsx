@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, ChevronRight, FileText, Film, Link2, RefreshCw, Search, Sparkles } from "lucide-react";
 import { hubGet, hubPatch, hubPost, hubPut, hubUpload } from "../lib/hubApi";
+import PageTitle from "../components/PageTitle";
 
 export type Resource = {
   id: string; slug: string; kind: "doc" | "file" | "link"; title: string; description: string | null; category: string;
@@ -39,7 +40,7 @@ function useCollapsed() {
 function Card({ r, badge }: { r: Resource; badge?: string }) {
   return (
     <Link to={`/resources/${r.slug}`} className="glass-card rounded-2xl p-4 flex gap-3 hover:shadow-md transition-shadow">
-      <span className="mt-0.5 text-slate-500"><ResourceIcon r={r} /></span>
+      <span className="hub-icon-chip hub-icon-chip--sm"><ResourceIcon r={r} /></span>
       <span className="min-w-0 space-y-1">
         <span className="block font-semibold">
           {badge && <span className="mr-2 rounded-full px-2 py-0.5 text-xs font-semibold align-middle" style={{ background: "var(--theme-accent-100, #dbeafe)", color: "var(--theme-accent-800, #1e40af)" }}>{badge}</span>}
@@ -319,10 +320,9 @@ export default function ResourcesPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold">Resources</h1>
-          <p className="text-sm text-slate-500">Policies, processes and tutorials. Documents are kept in Google Drive; what you see here is always the latest version.</p>
-        </div>
+        <PageTitle title="Resources">
+          Policies, processes and tutorials. Documents are kept in Google Drive; what you see here is always the latest version.
+        </PageTitle>
         {tab === "manage" && <button type="button" className="rounded-xl border border-slate-600 px-4 py-2 text-sm" onClick={() => setTab("browse")}>Back to Resources</button>}
       </div>
       {tab === "browse" ? <Browse onManage={canManage ? () => setTab("manage") : null} /> : <Manage />}

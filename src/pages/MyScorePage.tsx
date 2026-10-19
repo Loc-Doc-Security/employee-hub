@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { hubGet } from "../lib/hubApi";
+import PageTitle from "../components/PageTitle";
 
 type Item = { done: boolean; count: number; owed?: number };
 type Card = {
@@ -184,14 +185,13 @@ export default function MyScorePage() {
   return (
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold">My Score</h1>
+        <PageTitle title="My Score">
           <div className="flex items-center gap-2 text-sm mt-1">
             <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" onClick={() => setMonth(shiftMonth(month, -1))}>← Prev</button>
             <span className="font-semibold">{fmtMonth(month)}</span>
             <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" disabled={month >= thisMonth()} onClick={() => setMonth(shiftMonth(month, 1))}>Next →</button>
           </div>
-        </div>
+        </PageTitle>
         <button type="button" aria-pressed={showTeam} onClick={() => setShowTeam(!showTeam)}
           className={`rounded-xl border px-4 py-2 text-sm ${showTeam ? "btn-brand" : "border-slate-600"}`}>{showTeam ? "Back to my score" : "Team scores"}</button>
       </div>

@@ -32,20 +32,20 @@ function DueCard({ icon: Icon, title, status, line, to, action }: {
   icon: ComponentType<{ className?: string }>; title: string; status: Status | null; line: string; to: string; action?: string;
 }) {
   return (
-    <div className="hub-card p-4 flex flex-col gap-3">
+    <div className="hub-card p-4 space-y-3">
       <div className="flex items-center gap-3">
         <span className="hub-icon-chip hub-icon-chip--sm"><Icon /></span>
         <span className="font-bold">{title}</span>
       </div>
-      <div className={`text-sm flex items-center gap-1.5 ${status ? STATUS_STYLE[status] : "text-slate-500"}`}>
-        {status === "done" && <CheckCircle2 className="w-4 h-4" />}
-        {status === "pto" && <Palmtree className="w-4 h-4" />}
-        {status === null ? "Loading…" : line}
-      </div>
-      <div className="mt-auto">
+      <div className="flex items-center justify-between gap-2">
+        <span className={`text-sm flex items-center gap-1.5 ${status ? STATUS_STYLE[status] : "text-slate-500"}`}>
+          {status === "done" && <CheckCircle2 className="w-4 h-4 shrink-0" />}
+          {status === "pto" && <Palmtree className="w-4 h-4 shrink-0" />}
+          {status === null ? "Loading…" : line}
+        </span>
         {action
-          ? <Link to={to} className="btn-brand text-sm">{action}</Link>
-          : <Link to={to} className="btn-text text-sm">Open</Link>}
+          ? <Link to={to} className="btn-brand text-sm shrink-0 !min-w-0 !px-4 !py-1.5">{action}</Link>
+          : <Link to={to} className="btn-text text-sm shrink-0">Open</Link>}
       </div>
     </div>
   );
@@ -221,7 +221,7 @@ export default function HomePage() {
         <>
           <section>
             <div className="hub-section-title">Due this week</div>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 items-start">
               <WeeklyCard />
               <CleanlinessCard />
               <PeerCard />

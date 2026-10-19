@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import { hubGet, useMe } from "../lib/hubApi";
 import { ScoreCard } from "./MyScorePage";
+import PageTitle from "../components/PageTitle";
 
 type Row = {
   id: string; name: string; departments: string; oneOnOne: boolean; overall: number; participation: number; level: string;
@@ -134,14 +135,13 @@ export default function TeamReportPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold">Team Report</h1>
+        <PageTitle title="Team Report">
           <div className="flex items-center gap-2 text-sm mt-1">
             <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" onClick={() => setMonth(shiftMonth(month, -1))}>← Prev</button>
             <span className="font-semibold">{fmtMonth(month)}</span>
             <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" disabled={month >= thisMonth()} onClick={() => setMonth(shiftMonth(month, 1))}>Next →</button>
           </div>
-        </div>
+        </PageTitle>
         {companyWide && (
           <div className="flex gap-2" role="tablist">
             {([["team", "My team"], ["managers", "Managers"]] as const).map(([k, n]) => (

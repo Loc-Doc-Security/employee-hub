@@ -6,6 +6,7 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import { Check, Download, Info, X } from "lucide-react";
 import { hubGet, hubPost, hubPut } from "../lib/hubApi";
 import { CRITERIA, DEFAULT_PROFITABILITY, computeBonus, type BonusStatus } from "../lib/bonusMath";
+import PageTitle from "../components/PageTitle";
 
 type Pool = { amount: number; set_at: string; set_by: string | null } | null;
 type SavedRow = { employee_id: string; employee_name: string; team: string; reliability: number; profitability: number; tenure: number; suggested: number; status: "confirmed" | "excluded"; payout: number };
@@ -179,10 +180,9 @@ export default function BonusPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold">Bonus Calculator</h1>
-          <p className="text-sm text-slate-500">Reliability 50% · Profitability 35% · Tenure 15% of the month's pool, split by each person's share.</p>
-        </div>
+        <PageTitle title="Bonus Calculator">
+          Reliability 50% · Profitability 35% · Tenure 15% of the month's pool, split by each person's share.
+        </PageTitle>
         <select className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" value={month} onChange={(e) => pick(e.target.value)} disabled={!!review}>
           {months.map((m) => <option key={m} value={m}>{monthLabel(m)}</option>)}
         </select>

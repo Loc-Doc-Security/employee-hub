@@ -5,6 +5,7 @@
 //   File for someone   super admin only: any tech, any date, any time.
 import { useEffect, useRef, useState } from "react";
 import { hubGet, hubPut, hubUpload, shrinkImage, useUploadUrl } from "../lib/hubApi";
+import PageTitle from "../components/PageTitle";
 
 type Photo = { uploadId: string; caption: string };
 type Spotlight = {
@@ -228,7 +229,7 @@ export default function TechSpotlightPage() {
   const tabs: [typeof tab, string][] = [["mine", "My spotlight"], ["showcase", "Showcase"], ...(mine?.canFileForAnyone ? [["admin", "File for someone"] as [typeof tab, string]] : [])];
   return (
     <div className="space-y-4">
-      <h1 className="text-3xl font-bold">Tech Spotlight</h1>
+      <PageTitle title="Tech Spotlight" />
       <div className="flex gap-2 flex-wrap" role="tablist">
         {tabs.map(([k, n]) => (
           <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
