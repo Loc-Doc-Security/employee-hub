@@ -17,6 +17,7 @@ config({ path: [".env.local", ".env"], quiet: true });
 
 type Row = Record<string, unknown> & { _id: string };
 const text = (v: unknown) => (v === undefined || v === null ? "" : String(v).trim());
+const stamp = (v: unknown) => (v && typeof v === "object" && "$date" in v ? (v as { $date: string }).$date : null);
 
 async function newestExport(): Promise<string> {
   const root = path.resolve("../locdoc-hub-app/wix-export");
@@ -46,16 +47,21 @@ async function main() {
       const active = r.isActive !== false;
       const slug = existing.get(r._id) ?? uniqueSlug(slugify(title.replace(/\.pdf$/i, "")), taken);
       taken.add(slug);
+      // Keep Wix's dates so imported resources don't all look "recently updated".
+      const created = stamp(r._createdDate) ?? new Date().toISOString();
+      const updated = stamp(r.lastUpdated) ?? stamp(r._updatedDate) ?? created;
       const isPdf = text(r.fileType) === "pdf";
       if (isPdf) {
         const url = text(r.driveUrl);
         if (!url.startsWith("https://")) { n.skippedNoDoc.push(title); continue; }
         await db.query(
-          `INSERT INTO resources (id, company_id, slug, kind, title, description, category, url, search_text, is_active, source)
-           VALUES ($1,$2,$3,'link',$4,$5,$6,$7,$8,$9,'wix_import')
+          `INSERT INTO resources (id, company_id, slug, kind, title, description, category, url, search_text, is_active, source, created_at, updated_at)
+           VALUES ($1,$2,$3,'link',$4,$5,$6,$7,$8,$9,'wix_import',$10,$11)
            ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description, category = EXCLUDED.category,
-             url = EXCLUDED.url, search_text = EXCLUDED.search_text, is_active = EXCLUDED.is_active`,
-          [r._id, company.id, slug, title, description, category, url, [title, description].filter(Boolean).join(" "), active]);
+             url = EXCLUDED.url, search_text = EXCLUDED.search_text, is_active = EXCLUDED.is_active,
+             created_at = EXCLUDED.created_at, updated_at = EXCLUDED.updated_at
+         WHERE resources.source = 'wix_import'`,
+          [r._id, company.id, slug, title, description, category, url, [title, description].filter(Boolean).join(" "), active, created, updated]);
         n.pdfLinks.push(title);
         continue;
       }
@@ -63,13 +69,13 @@ async function main() {
       if (!docId) { n.skippedNoDoc.push(title); continue; }
       const html = text(r.contentHTML) ? cleanDocHtml(text(r.contentHTML)) : null;
       await db.query(
-        `INSERT INTO resources (id, company_id, slug, kind, title, description, category, drive_file_id, content_html, search_text, is_active, source)
-         VALUES ($1,$2,$3,'doc',$4,$5,$6,$7,$8,$9,$10,'wix_import')
+        `INSERT INTO resources (id, company_id, slug, kind, title, description, category, drive_file_id, content_html, search_text, is_active, source, created_at, updated_at)
+         VALUES ($1,$2,$3,'doc',$4,$5,$6,$7,$8,$9,$10,'wix_import',$11,$12)
          ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description, category = EXCLUDED.category,
            drive_file_id = EXCLUDED.drive_file_id, content_html = EXCLUDED.content_html, search_text = EXCLUDED.search_text,
-           is_active = EXCLUDED.is_active
+           is_active = EXCLUDED.is_active, created_at = EXCLUDED.created_at, updated_at = EXCLUDED.updated_at
          WHERE resources.source = 'wix_import'`,
-        [r._id, company.id, slug, title, description, category, docId, html, html ? htmlToText(html) : title, active]);
+        [r._id, company.id, slug, title, description, category, docId, html, html ? htmlToText(html) : title, active, created, updated]);
       n.docs++;
     }
     await db.query("COMMIT");

@@ -3,12 +3,12 @@
 // Everyone reads; Resources admins get a Manage tab (Drive folder, Sync now, uploads, addresses).
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { FileText, Film, Link2, RefreshCw, Search } from "lucide-react";
+import { ChevronDown, ChevronRight, FileText, Film, Link2, RefreshCw, Search, Sparkles } from "lucide-react";
 import { hubGet, hubPatch, hubPost, hubPut, hubUpload } from "../lib/hubApi";
 
 export type Resource = {
   id: string; slug: string; kind: "doc" | "file" | "link"; title: string; description: string | null; category: string;
-  scope: "company" | "oms"; updatedAt: string; isActive: boolean; driveUrl: string | null; url: string | null;
+  scope: "company" | "oms"; updatedAt: string; createdAt: string; isActive: boolean; driveUrl: string | null; url: string | null;
   contentType: string | null; snippet?: string | null;
 };
 
@@ -18,6 +18,38 @@ export function ResourceIcon({ r, className = "w-5 h-5" }: { r: Pick<Resource, "
   if (r.kind === "link") return <Link2 className={className} />;
   if (r.kind === "file" && r.contentType?.startsWith("video/")) return <Film className={className} />;
   return <FileText className={className} />;
+}
+
+const WEEK = 7 * 24 * 60 * 60 * 1000;
+const COLLAPSED_KEY = "resources.collapsed";
+
+/** Which categories this person has collapsed; remembered in this browser only. */
+function useCollapsed() {
+  const [collapsed, setCollapsed] = useState<Set<string>>(() => {
+    try { return new Set(JSON.parse(localStorage.getItem(COLLAPSED_KEY) ?? "[]") as string[]); } catch { return new Set(); }
+  });
+  const save = (next: Set<string>) => {
+    setCollapsed(next);
+    try { localStorage.setItem(COLLAPSED_KEY, JSON.stringify([...next])); } catch { /* private window: just don't remember */ }
+  };
+  const toggle = (c: string) => { const next = new Set(collapsed); if (next.has(c)) next.delete(c); else next.add(c); save(next); };
+  return { collapsed, toggle, setAll: (cats: string[]) => save(new Set(cats)) };
+}
+
+function Card({ r, badge }: { r: Resource; badge?: string }) {
+  return (
+    <Link to={`/resources/${r.slug}`} className="glass-card rounded-2xl p-4 flex gap-3 hover:shadow-md transition-shadow">
+      <span className="mt-0.5 text-slate-500"><ResourceIcon r={r} /></span>
+      <span className="min-w-0 space-y-1">
+        <span className="block font-semibold">
+          {badge && <span className="mr-2 rounded-full px-2 py-0.5 text-xs font-semibold align-middle" style={{ background: "var(--theme-accent-100, #dbeafe)", color: "var(--theme-accent-800, #1e40af)" }}>{badge}</span>}
+          {r.title}
+        </span>
+        {(r.snippet || r.description) && <span className="block text-sm text-slate-600 line-clamp-2">{r.snippet ?? r.description}</span>}
+        <span className="block text-xs text-slate-500">{badge ? `${r.category} · ` : ""}Updated {fmt(r.updatedAt)}{r.scope === "oms" ? " · OMS-wide" : ""}</span>
+      </span>
+    </Link>
+  );
 }
 
 function Browse({ onManage }: { onManage: (() => void) | null }) {
@@ -40,6 +72,16 @@ function Browse({ onManage }: { onManage: (() => void) | null }) {
     return [...m];
   }, [shown]);
 
+  const { collapsed, toggle, setAll } = useCollapsed();
+  const browsing = !q.trim() && category === "All";
+  const now = Date.now();
+  const recent = browsing ? (data?.items ?? [])
+    .filter((r) => now - new Date(r.updatedAt).getTime() < WEEK)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)) : [];
+  // While searching, show every match; collapsing is for browsing.
+  const isOpen = (cat: string) => !browsing || !collapsed.has(cat);
+  const allCollapsed = groups.length > 0 && groups.every(([c]) => collapsed.has(c));
+
   if (error) return <div className="glass-card rounded-2xl p-6 text-sm text-red-700">{error}</div>;
   return (
     <div className="space-y-4">
@@ -49,6 +91,11 @@ function Browse({ onManage }: { onManage: (() => void) | null }) {
           <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search titles and the text inside documents…"
             className="w-full rounded-xl border border-slate-200 bg-white/70 pl-9 pr-3 py-2 text-sm" aria-label="Search resources" />
         </label>
+        {browsing && groups.length > 1 && (
+          <button type="button" className="btn-text" onClick={() => setAll(allCollapsed ? [] : groups.map(([c]) => c))}>
+            {allCollapsed ? "Expand all" : "Collapse all"}
+          </button>
+        )}
         {onManage && <button type="button" className="rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={onManage}>Manage</button>}
       </div>
       {categories.length > 2 && (
@@ -61,23 +108,30 @@ function Browse({ onManage }: { onManage: (() => void) | null }) {
       )}
       {!data ? <div className="text-sm text-slate-500">Loading…</div>
         : !shown.length ? <div className="glass-card rounded-2xl p-6 text-sm text-slate-500">{q ? `Nothing matches "${q}".` : "No resources yet."}</div>
-        : groups.map(([cat, items]) => (
-          <section key={cat} className="space-y-2">
-            <h2 className="text-lg font-semibold">{cat}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-              {items.map((r) => (
-                <Link key={r.id} to={`/resources/${r.slug}`} className="glass-card rounded-2xl p-4 flex gap-3 hover:shadow-md transition-shadow">
-                  <span className="mt-0.5 text-slate-500"><ResourceIcon r={r} /></span>
-                  <span className="min-w-0 space-y-1">
-                    <span className="block font-semibold">{r.title}</span>
-                    {(r.snippet || r.description) && <span className="block text-sm text-slate-600 line-clamp-2">{r.snippet ?? r.description}</span>}
-                    <span className="block text-xs text-slate-500">Updated {fmt(r.updatedAt)}{r.scope === "oms" ? " · OMS-wide" : ""}</span>
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </section>
-        ))}
+        : <>
+          {recent.length > 0 && (
+            <section className="space-y-2">
+              <h2 className="text-lg font-semibold inline-flex items-center gap-2"><Sparkles className="w-4 h-4" /> Recently updated <span className="text-sm font-normal text-slate-500">last 7 days</span></h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                {recent.map((r) => <Card key={r.id} r={r} badge={now - new Date(r.createdAt).getTime() < WEEK ? "New" : "Updated"} />)}
+              </div>
+            </section>
+          )}
+          {groups.map(([cat, items]) => (
+            <section key={cat} className="space-y-2">
+              <button type="button" onClick={() => browsing && toggle(cat)} aria-expanded={isOpen(cat)}
+                className="flex items-center gap-2 text-lg font-semibold" disabled={!browsing}>
+                {browsing && (isOpen(cat) ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />)}
+                {cat} <span className="text-sm font-normal text-slate-500">{items.length}</span>
+              </button>
+              {isOpen(cat) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {items.map((r) => <Card key={r.id} r={r} />)}
+                </div>
+              )}
+            </section>
+          ))}
+        </>}
     </div>
   );
 }

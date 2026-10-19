@@ -48,12 +48,12 @@ const scopeCompany = (a: Access, scope: Scope) => (scope === "oms" ? null : a.co
 
 const COLUMNS = `r.id, r.slug, r.kind, r.title, r.description, r.category, r.is_active,
   CASE WHEN r.company_id IS NULL THEN 'oms' ELSE 'company' END AS scope,
-  coalesce(r.drive_modified_at, r.updated_at) AS updated_at, r.drive_file_id, r.url, r.upload_id, u.content_type`;
+  coalesce(r.drive_modified_at, r.updated_at) AS updated_at, r.created_at, r.drive_file_id, r.url, r.upload_id, u.content_type`;
 const FROM = "employee_hub.resources r LEFT JOIN employee_hub.uploads u ON u.id = r.upload_id";
 
 const shape = (r: Record<string, any>) => ({
   id: r.id, slug: r.slug, kind: r.kind, title: r.title, description: r.description, category: r.category,
-  scope: r.scope, updatedAt: r.updated_at, isActive: r.is_active,
+  scope: r.scope, updatedAt: r.updated_at, createdAt: r.created_at, isActive: r.is_active,
   driveUrl: r.drive_file_id ? `https://docs.google.com/document/d/${r.drive_file_id}/edit` : null,
   url: r.url, contentType: r.content_type ?? null,
 });
@@ -292,7 +292,9 @@ export function registerResourceRoutes(app: express.Express, getAuthUser: GetAut
       if (b.category !== undefined) next.category = cleanText(b.category, 60) || "General";
       if (b.isActive !== undefined) next.is_active = !!b.isActive;
       await db.query(
-        `UPDATE employee_hub.resources SET slug = $2, title = $3, description = $4, category = $5, is_active = $6, updated_at = now(),
+        `UPDATE employee_hub.resources SET slug = $2, title = $3, description = $4, category = $5, is_active = $6,
+                -- only real content changes count as "updated" (not a new address or hiding it)
+                updated_at = CASE WHEN (title, description, category) IS DISTINCT FROM ($3::text, $4::text, $5::text) THEN now() ELSE updated_at END,
                 search_text = CASE WHEN kind = 'doc' THEN search_text ELSE concat_ws(' ', $3::text, $4::text) END
           WHERE id = $1`,
         [r.id, next.slug, next.title, next.description, next.category, next.is_active]);
