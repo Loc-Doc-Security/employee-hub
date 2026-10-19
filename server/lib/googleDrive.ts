@@ -23,6 +23,9 @@ function key(): Key | null {
   const raw = process.env.GOOGLE_SERVICE_ACCOUNT_JSON?.trim()
     || (process.env.GOOGLE_SERVICE_ACCOUNT_FILE?.trim() ? readFileSync(process.env.GOOGLE_SERVICE_ACCOUNT_FILE.trim(), "utf8") : "");
   if (!raw) return (cachedKey = null);
+  if (process.env.NODE_ENV === "production" && process.env.GOOGLE_SERVICE_ACCOUNT_FILE?.trim()) {
+    console.warn("[google] Using a key FILE in production. Move it to AWS Secrets Manager as GOOGLE_SERVICE_ACCOUNT_JSON (see GO-LIVE.md).");
+  }
   const k = JSON.parse(raw) as Key;
   if (!k.client_email || !k.private_key) throw new Error("The Google service account key is missing client_email or private_key.");
   return (cachedKey = k);

@@ -6,3 +6,5 @@ dist-server/
 employee-hub-data.sqlite
 *.sqlite
 uploads/
+# Google service account key (local only; production uses AWS Secrets Manager, see GO-LIVE.md)
+google-service-account.json
