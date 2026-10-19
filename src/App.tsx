@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-route
 import { AppProvider, useApp } from "./context/AppContext";
 import LoginPage from "./components/LoginPage";
 import AppShell from "./components/AppShell";
-import HomePage from "./components/HomePage";
+import HomePage from "./pages/HomePage";
 import PeoplePage from "./pages/PeoplePage";
 import WeeklyReportPage from "./pages/WeeklyReportPage";
 import PeerAssessmentPage from "./pages/PeerAssessmentPage";
