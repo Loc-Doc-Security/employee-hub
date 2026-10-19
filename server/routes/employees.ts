@@ -28,6 +28,7 @@ import { registerDriverScorecardRoutes } from "./driverScorecard";
 import { registerCreditCardRoutes } from "./creditCard";
 import { registerAdminRoutes } from "./admin";
 import { registerShopRoutes } from "./shop";
+import { registerResourceRoutes } from "./resources";
 
 const send = (res: express.Response, data: unknown) => res.json({ ok: true, data });
 const fail = (res: express.Response, status: number, error: string) => res.status(status).json({ ok: false, error });
@@ -65,6 +66,7 @@ export function registerEmployeeRoutes(app: express.Express, getAuthUser: GetAut
   registerCreditCardRoutes(app, getAuthUser);
   registerAdminRoutes(app, getAuthUser);
   registerShopRoutes(app, getAuthUser);
+  registerResourceRoutes(app, getAuthUser);
 
   const withAccess = async (req: express.Request, res: express.Response) => {
     const current = await resolveCurrent(req, getAuthUser);

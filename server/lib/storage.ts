@@ -5,6 +5,7 @@
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
+import type { Response } from "express";
 
 const root = () => path.resolve(process.env.UPLOADS_DIR?.trim() || "uploads");
 
@@ -21,6 +22,23 @@ export async function loadFile(key: string): Promise<Buffer> {
   const full = path.resolve(root(), key);
   if (!full.startsWith(root() + path.sep)) throw new Error("Invalid storage key");
   return readFile(full);
+}
+
+/** Sends a stored file, honoring Range requests so videos can stream and seek (Safari requires it). */
+export function sendStoredFile(res: Response, key: string, contentType: string): void {
+  const full = path.resolve(root(), key);
+  if (!full.startsWith(root() + path.sep)) throw new Error("Invalid storage key");
+  res.sendFile(full, { headers: { "Content-Type": contentType, "Cache-Control": "private, max-age=3600" } });
+}
+
+/** Recognizes the PDFs and videos Resources accepts, from the file's first bytes. */
+export function sniffDocument(bytes: Buffer): { ext: string; contentType: string } | null {
+  if (bytes.length > 5 && bytes.subarray(0, 5).toString("ascii") === "%PDF-") return { ext: "pdf", contentType: "application/pdf" };
+  if (bytes.length > 12 && bytes.subarray(4, 8).toString("ascii") === "ftyp") {
+    return bytes.subarray(8, 10).toString("ascii") === "qt" ? { ext: "mov", contentType: "video/quicktime" } : { ext: "mp4", contentType: "video/mp4" };
+  }
+  if (bytes.length > 4 && bytes.subarray(0, 4).equals(Buffer.from([0x1a, 0x45, 0xdf, 0xa3]))) return { ext: "webm", contentType: "video/webm" };
+  return null;
 }
 
 /** Recognizes the image formats phones produce, from the file's first bytes (not its claimed type). */
