@@ -29,7 +29,7 @@ const thisMonth = () => new Date().toISOString().slice(0, 7);
 
 function Bar({ value }: { value: number }) {
   return (
-    <div className="h-2 rounded-full bg-slate-200/70 overflow-hidden">
+    <div className="h-2 rounded-full bg-slate-700/70 overflow-hidden">
       <div className="h-full rounded-full" style={{ width: `${Math.max(0, Math.min(100, value))}%`, background: "var(--theme-accent-600, #2563eb)" }} />
     </div>
   );
@@ -64,7 +64,7 @@ export function ScoreCard({ card }: { card: Card }) {
           <div className="text-2xl font-bold">{card.streak} month{card.streak === 1 ? "" : "s"}</div>
           <div className="flex flex-wrap gap-2">
             {card.badges.length ? card.badges.map((b) => (
-              <span key={b.key} className="rounded-full border border-slate-200 px-3 py-1 text-xs">{b.emoji} {b.label}</span>
+              <span key={b.key} className="rounded-full border border-slate-700 px-3 py-1 text-xs">{b.emoji} {b.label}</span>
             )) : <span className="text-xs text-slate-500">No badges this month yet.</span>}
           </div>
         </div>
@@ -155,7 +155,7 @@ function TeamScores({ month }: { month: string }) {
       <table className="w-full text-sm">
         <tbody>
           {data.people.map((p) => (
-            <tr key={p.id} className={`border-t border-slate-100 ${p.isMe ? "font-semibold" : ""}`}>
+            <tr key={p.id} className={`border-t border-slate-800 ${p.isMe ? "font-semibold" : ""}`}>
               <td className="p-3 w-10 text-slate-500">{p.rank}</td>
               <td className="p-3">
                 {data.canOpen && !p.isMe ? <button type="button" className="hover:underline" onClick={() => setOpenId(p.id)}>{p.name}</button> : p.name}
@@ -187,13 +187,13 @@ export default function MyScorePage() {
         <div>
           <h1 className="text-3xl font-bold">My Score</h1>
           <div className="flex items-center gap-2 text-sm mt-1">
-            <button type="button" className="rounded-xl border border-slate-200 px-3 py-1" onClick={() => setMonth(shiftMonth(month, -1))}>← Prev</button>
+            <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" onClick={() => setMonth(shiftMonth(month, -1))}>← Prev</button>
             <span className="font-semibold">{fmtMonth(month)}</span>
-            <button type="button" className="rounded-xl border border-slate-200 px-3 py-1" disabled={month >= thisMonth()} onClick={() => setMonth(shiftMonth(month, 1))}>Next →</button>
+            <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" disabled={month >= thisMonth()} onClick={() => setMonth(shiftMonth(month, 1))}>Next →</button>
           </div>
         </div>
         <button type="button" aria-pressed={showTeam} onClick={() => setShowTeam(!showTeam)}
-          className={`rounded-xl border px-4 py-2 text-sm ${showTeam ? "btn-brand" : "border-slate-300"}`}>{showTeam ? "Back to my score" : "Team scores"}</button>
+          className={`rounded-xl border px-4 py-2 text-sm ${showTeam ? "btn-brand" : "border-slate-600"}`}>{showTeam ? "Back to my score" : "Team scores"}</button>
       </div>
       {error && <div className="text-sm text-red-700">{error}</div>}
       {showTeam ? <TeamScores month={month} /> : card ? <ScoreCard card={card} /> : !error && <div className="text-sm text-slate-500">Loading…</div>}

@@ -18,7 +18,7 @@ function embedFor(url: string): string | null {
   return null;
 }
 
-const frame = "w-full rounded-2xl border border-slate-200 bg-white";
+const frame = "w-full rounded-2xl border border-slate-700 bg-slate-900";
 
 export default function ResourceViewPage() {
   const { slug = "" } = useParams();
@@ -44,18 +44,18 @@ export default function ResourceViewPage() {
           <div className="min-w-0">
             <h1 className="text-3xl font-bold">{r.title}</h1>
             <p className="text-sm text-slate-500">{r.category} · updated {new Date(r.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}{r.scope === "oms" ? " · OMS-wide" : ""}</p>
-            {r.description && <p className="text-sm text-slate-600 mt-1">{r.description}</p>}
+            {r.description && <p className="text-sm text-slate-400 mt-1">{r.description}</p>}
           </div>
         </div>
         {r.kind === "doc" && r.driveUrl && (
-          <a className="rounded-xl border border-slate-300 px-4 py-2 text-sm inline-flex items-center gap-2" href={r.driveUrl} target="_blank" rel="noreferrer">
+          <a className="rounded-xl border border-slate-600 px-4 py-2 text-sm inline-flex items-center gap-2" href={r.driveUrl} target="_blank" rel="noreferrer">
             Open in Google Drive <ExternalLink className="w-4 h-4" /></a>
         )}
         {r.kind === "link" && r.url && (
           <a className="btn-brand inline-flex items-center gap-2" href={r.url} target="_blank" rel="noreferrer">Open link <ExternalLink className="w-4 h-4" /></a>
         )}
         {r.kind === "file" && r.fileUrl && (
-          <a className="rounded-xl border border-slate-300 px-4 py-2 text-sm inline-flex items-center gap-2" href={r.fileUrl} target="_blank" rel="noreferrer">
+          <a className="rounded-xl border border-slate-600 px-4 py-2 text-sm inline-flex items-center gap-2" href={r.fileUrl} target="_blank" rel="noreferrer">
             {isVideo ? "Open video" : "Open PDF"} <ExternalLink className="w-4 h-4" /></a>
         )}
       </div>
@@ -64,11 +64,11 @@ export default function ResourceViewPage() {
         ? <iframe title={r.title} srcDoc={r.html} sandbox="allow-popups allow-popups-to-escape-sandbox" className={frame} style={{ height: "calc(100vh - 220px)", minHeight: 480 }} />
         : <div className="glass-card rounded-2xl p-6 text-sm text-slate-500">This Doc hasn't been synced from Drive yet. Open it in Google Drive for now.</div>)}
       {r.kind === "file" && r.fileUrl && (isVideo
-        ? <video controls preload="metadata" src={r.fileUrl} className="w-full rounded-2xl bg-black max-h-[75vh]" />
+        ? <video controls preload="metadata" src={r.fileUrl} className="w-full rounded-2xl bg-[#000] max-h-[75vh]" />
         : <iframe title={r.title} src={r.fileUrl} className={frame} style={{ height: "calc(100vh - 220px)", minHeight: 480 }} />)}
       {embed && (
         <div className="aspect-video w-full">
-          <iframe title={r.title} src={embed} className="w-full h-full rounded-2xl border border-slate-200" allow="fullscreen; picture-in-picture" allowFullScreen />
+          <iframe title={r.title} src={embed} className="w-full h-full rounded-2xl border border-slate-700" allow="fullscreen; picture-in-picture" allowFullScreen />
         </div>
       )}
     </div>

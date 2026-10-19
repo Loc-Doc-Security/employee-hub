@@ -65,7 +65,7 @@ function MyTeam({ month }: { month: string }) {
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.id} className="border-t border-slate-100">
+              <tr key={r.id} className="border-t border-slate-800">
                 <td className="p-3">
                   <button type="button" className="font-semibold hover:underline text-left" onClick={() => setOpen(r)}>{r.name}</button>
                   <div className="text-xs text-slate-500">{r.departments || "—"}{r.ptoWeeks.length ? ` · PTO ${r.ptoWeeks.length} wk` : ""}</div>
@@ -101,7 +101,7 @@ function Managers({ month }: { month: string }) {
       <thead className="text-left text-slate-500"><tr><th className="p-3">Manager</th><th className="p-3">Team</th><th className="p-3">Team average</th><th className="p-3">1:1s this month</th></tr></thead>
       <tbody>
         {list.map((m) => (
-          <tr key={m.id} className="border-t border-slate-100">
+          <tr key={m.id} className="border-t border-slate-800">
             <td className="p-3 font-semibold">{m.name}</td>
             <td className="p-3">{m.teamSize}</td>
             <td className="p-3">{m.teamAverage === null ? "—" : `${m.teamAverage}%`}</td>
@@ -137,16 +137,16 @@ export default function TeamReportPage() {
         <div>
           <h1 className="text-3xl font-bold">Team Report</h1>
           <div className="flex items-center gap-2 text-sm mt-1">
-            <button type="button" className="rounded-xl border border-slate-200 px-3 py-1" onClick={() => setMonth(shiftMonth(month, -1))}>← Prev</button>
+            <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" onClick={() => setMonth(shiftMonth(month, -1))}>← Prev</button>
             <span className="font-semibold">{fmtMonth(month)}</span>
-            <button type="button" className="rounded-xl border border-slate-200 px-3 py-1" disabled={month >= thisMonth()} onClick={() => setMonth(shiftMonth(month, 1))}>Next →</button>
+            <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" disabled={month >= thisMonth()} onClick={() => setMonth(shiftMonth(month, 1))}>Next →</button>
           </div>
         </div>
         {companyWide && (
           <div className="flex gap-2" role="tablist">
             {([["team", "My team"], ["managers", "Managers"]] as const).map(([k, n]) => (
               <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
-                className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === k ? "btn-brand" : "border-slate-200 bg-white/70"}`}>{n}</button>
+                className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === k ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}>{n}</button>
             ))}
           </div>
         )}

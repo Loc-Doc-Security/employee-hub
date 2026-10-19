@@ -12,7 +12,7 @@ type Meeting = {
 };
 type Person = { id: string; name: string };
 
-const field = "w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm";
+const field = "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm";
 const fmt = (d: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
 const shiftDays = (d: string, n: number) => {
   const x = new Date(`${d}T12:00:00Z`);
@@ -39,7 +39,7 @@ function MeetingRow({ m, people, onSaved }: { m: Meeting; people: Person[]; onSa
   };
 
   return (
-    <div className="border-t border-slate-100 p-4 first:border-t-0 space-y-2">
+    <div className="border-t border-slate-800 p-4 first:border-t-0 space-y-2">
       <div className="flex items-center justify-between gap-2">
         <div className="font-semibold">{fmt(m.date)}</div>
         <div className={`text-xs ${status && status !== "Saved" && status !== "Saving…" ? "text-red-700" : "text-slate-500"}`}>{status}</div>
@@ -58,7 +58,7 @@ function MeetingRow({ m, people, onSaved }: { m: Meeting; people: Person[]; onSa
           <option value="slides">Google Slides</option>
           <option value="external">Other link</option>
         </select>
-        <button type="button" className="rounded-xl border border-slate-300 px-4 py-2 text-sm"
+        <button type="button" className="rounded-xl border border-slate-600 px-4 py-2 text-sm"
           disabled={url === (m.presentation_url ?? "") && type === (m.presentation_type ?? "slides")}
           onClick={() => void save({ presentationUrl: url.trim() || null, presentationType: type })}>{url.trim() ? "Save link" : "Remove link"}</button>
       </div>
@@ -93,11 +93,11 @@ function Schedule() {
   return (
     <div className="space-y-3">
       <div className="flex gap-2 flex-wrap items-center text-sm">
-        <button type="button" className="rounded-xl border border-slate-200 px-3 py-1" onClick={() => setFrom(shiftDays(data.from, -7 * weeks))}>← Earlier</button>
-        <button type="button" className="rounded-xl border border-slate-200 px-3 py-1" onClick={() => setFrom(null)}>From this week</button>
-        <button type="button" className="rounded-xl border border-slate-200 px-3 py-1" onClick={() => setWeeks(weeks + 12)}>Show 12 more</button>
+        <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" onClick={() => setFrom(shiftDays(data.from, -7 * weeks))}>← Earlier</button>
+        <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" onClick={() => setFrom(null)}>From this week</button>
+        <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" onClick={() => setWeeks(weeks + 12)}>Show 12 more</button>
         <span className="ml-auto flex gap-2 items-center">
-          <input type="date" className="rounded-xl border border-slate-200 px-2 py-1" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
+          <input type="date" className="rounded-xl border border-slate-700 px-2 py-1" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
           <button type="button" className="btn-brand" disabled={!newDate} onClick={() => void add()}>Add meeting</button>
         </span>
       </div>
@@ -121,7 +121,7 @@ export default function WednesdayMeetingPage() {
       <div className="flex gap-2" role="tablist">
         {([["deck", "Meeting deck"], ["schedule", "Schedule"]] as const).map(([k, n]) => (
           <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
-            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === k ? "btn-brand" : "border-slate-200 bg-white/70"}`}>{n}</button>
+            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === k ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}>{n}</button>
         ))}
       </div>
       {tab === "deck" ? <MeetingDeck /> : <Schedule />}

@@ -24,10 +24,10 @@ const PROFIT_LABEL: Record<number, string> = { 2: "Missed", 3: "Hit", 4: "Exceed
 
 function ProfitToggle({ value, onChange, label }: { value: number | null; onChange: (v: number) => void; label: string }) {
   return (
-    <div className="inline-flex rounded-lg border border-slate-200 overflow-hidden" role="group" aria-label={label}>
+    <div className="inline-flex rounded-lg border border-slate-700 overflow-hidden" role="group" aria-label={label}>
       {[2, 3, 4].map((v) => (
         <button key={v} type="button" onClick={() => onChange(v)} aria-pressed={value === v}
-          className={`px-2 py-1 text-xs font-semibold border-r border-slate-200 last:border-r-0 ${value === v ? "btn-brand rounded-none" : "bg-white/70 text-slate-500"}`}>{PROFIT_LABEL[v]}</button>
+          className={`px-2 py-1 text-xs font-semibold border-r border-slate-700 last:border-r-0 ${value === v ? "btn-brand rounded-none" : "bg-slate-900/70 text-slate-500"}`}>{PROFIT_LABEL[v]}</button>
       ))}
     </div>
   );
@@ -63,7 +63,7 @@ function Review({ month, pool, initial, basis, onSaved, onCancel }: {
       <div className="flex items-center justify-between gap-3 flex-wrap text-sm">
         <span className="font-semibold">{marked} of {rows.length} reviewed · {money(total)} of {money(pool)}</span>
         <span className="flex gap-2">
-          <button type="button" className="rounded-xl border border-slate-300 px-4 py-2" onClick={onCancel}>Cancel</button>
+          <button type="button" className="rounded-xl border border-slate-600 px-4 py-2" onClick={onCancel}>Cancel</button>
           <button type="button" className="btn-brand" disabled={busy || marked < rows.length} onClick={() => void save()}>{busy ? "Saving…" : "Save payouts"}</button>
         </span>
       </div>
@@ -80,32 +80,32 @@ function Review({ month, pool, initial, basis, onSaved, onCancel }: {
               const values = new Set(members.map((m) => m.profitability));
               return (
                 <Fragment key={team}>
-                  <tr className="border-t border-slate-200 bg-slate-50/60">
-                    <td className="p-3 font-semibold uppercase text-xs text-slate-600" colSpan={3}>{team}</td>
+                  <tr className="border-t border-slate-700 bg-slate-900/60">
+                    <td className="p-3 font-semibold uppercase text-xs text-slate-400" colSpan={3}>{team}</td>
                     <td className="p-3" colSpan={3}><ProfitToggle label={`${team} profitability`} value={values.size === 1 ? [...values][0] : null} onChange={(v) => setTeam(team, v)} /></td>
                   </tr>
                   {members.map((l) => {
                     const r = rows.find((x) => x.employeeId === l.employeeId)!;
                     return (
                       <Fragment key={l.employeeId}>
-                        <tr className={`border-t border-slate-100 ${l.status === "excluded" ? "opacity-50" : ""}`}>
+                        <tr className={`border-t border-slate-800 ${l.status === "excluded" ? "opacity-50" : ""}`}>
                           <td className="p-3"><div className="font-semibold">{r.name}</div></td>
                           <td className="p-3">
                             {r.reliability.toFixed(2)} {!r.hasAssessments && <span className="block text-xs font-semibold text-red-700">No peer assessments in 190 days</span>}
-                            {r.breakdown && <button type="button" className="ml-1 align-middle text-slate-400 hover:text-slate-700" aria-label={`Reliability detail for ${r.name}`} onClick={() => setOpen(open === r.employeeId ? null : r.employeeId)}><Info className="w-4 h-4 inline" /></button>}
+                            {r.breakdown && <button type="button" className="ml-1 align-middle text-slate-600 hover:text-slate-300" aria-label={`Reliability detail for ${r.name}`} onClick={() => setOpen(open === r.employeeId ? null : r.employeeId)}><Info className="w-4 h-4 inline" /></button>}
                           </td>
                           <td className="p-3">{r.tenure.toFixed(2)} yrs {!r.hasHireDate && <span className="block text-xs font-semibold text-red-700">No hire date</span>}</td>
                           <td className="p-3"><ProfitToggle label={`${r.name} profitability`} value={r.profitability} onChange={(v) => set(r.employeeId, { profitability: v })} /></td>
                           <td className="p-3 text-right font-semibold">{l.status === "excluded" ? "$0" : money(Math.round(l.suggested))}</td>
                           <td className="p-3 text-center whitespace-nowrap">
                             <button type="button" aria-pressed={l.status === "confirmed"} aria-label={`Confirm ${r.name}`} onClick={() => mark(r.employeeId, "confirmed")}
-                              className={`rounded-lg border p-1.5 mr-1 ${l.status === "confirmed" ? "border-emerald-600 bg-emerald-600 text-white" : "border-slate-200 text-slate-400"}`}><Check className="w-4 h-4" /></button>
+                              className={`rounded-lg border p-1.5 mr-1 ${l.status === "confirmed" ? "border-emerald-600 bg-emerald-600 text-[#fff]" : "border-slate-700 text-slate-600"}`}><Check className="w-4 h-4" /></button>
                             <button type="button" aria-pressed={l.status === "excluded"} aria-label={`Exclude ${r.name}`} onClick={() => mark(r.employeeId, "excluded")}
-                              className={`rounded-lg border p-1.5 ${l.status === "excluded" ? "border-red-600 bg-red-600 text-white" : "border-slate-200 text-slate-400"}`}><X className="w-4 h-4" /></button>
+                              className={`rounded-lg border p-1.5 ${l.status === "excluded" ? "border-red-600 bg-red-600 text-[#fff]" : "border-slate-700 text-slate-600"}`}><X className="w-4 h-4" /></button>
                           </td>
                         </tr>
                         {open === r.employeeId && r.breakdown && (
-                          <tr className="bg-slate-50/60"><td colSpan={6} className="p-3 text-xs text-slate-600">
+                          <tr className="bg-slate-900/60"><td colSpan={6} className="p-3 text-xs text-slate-400">
                             Peer assessment averages from {r.assessmentCount} assessment{r.assessmentCount === 1 ? "" : "s"} in the last 190 days (1–4):{" "}
                             {CRITERIA.map((c) => <span key={c} className={`mr-3 ${r.breakdown![c] < 2.5 ? "font-semibold text-red-700" : ""}`}>{CRITERION_LABEL[c]} {r.breakdown![c].toFixed(2)}</span>)}
                             {r.hiredOn && <span className="block mt-1">Hired {r.hiredOn}</span>}
@@ -183,7 +183,7 @@ export default function BonusPage() {
           <h1 className="text-3xl font-bold">Bonus Calculator</h1>
           <p className="text-sm text-slate-500">Reliability 50% · Profitability 35% · Tenure 15% of the month's pool, split by each person's share.</p>
         </div>
-        <select className="rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm" value={month} onChange={(e) => pick(e.target.value)} disabled={!!review}>
+        <select className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" value={month} onChange={(e) => pick(e.target.value)} disabled={!!review}>
           {months.map((m) => <option key={m} value={m}>{monthLabel(m)}</option>)}
         </select>
       </div>
@@ -191,12 +191,12 @@ export default function BonusPage() {
 
       <section className="glass-card rounded-2xl p-5 space-y-3">
         <div className="font-semibold">1 · Bonus pool</div>
-        {data.pool && <div className="text-sm text-slate-600">{money(data.pool.amount)} set{data.pool.set_by ? ` by ${data.pool.set_by}` : ""} on {new Date(data.pool.set_at).toLocaleDateString()}</div>}
+        {data.pool && <div className="text-sm text-slate-400">{money(data.pool.amount)} set{data.pool.set_by ? ` by ${data.pool.set_by}` : ""} on {new Date(data.pool.set_at).toLocaleDateString()}</div>}
         <div className="flex gap-2 flex-wrap items-center">
           <span className="text-sm">$</span>
           <input type="number" min="0" step="0.01" value={poolInput} onChange={(e) => setPoolInput(e.target.value)} disabled={!!review}
-            className="w-40 rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm" aria-label="Bonus pool amount" />
-          <button type="button" className="rounded-xl border border-slate-300 px-4 py-2 text-sm" disabled={!!busy || !!review || !(Number(poolInput) > 0)} onClick={() => void savePool()}>
+            className="w-40 rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" aria-label="Bonus pool amount" />
+          <button type="button" className="rounded-xl border border-slate-600 px-4 py-2 text-sm" disabled={!!busy || !!review || !(Number(poolInput) > 0)} onClick={() => void savePool()}>
             {data.pool ? "Update pool" : "Set pool"}</button>
         </div>
         {run && data.pool && run.pool !== data.pool.amount && (
@@ -218,13 +218,13 @@ export default function BonusPage() {
               <div><div className="text-xs text-slate-500">Saved</div><div className="font-semibold">{new Date(run.savedAt).toLocaleDateString()}{run.savedBy ? ` by ${run.savedBy}` : ""}</div></div>
             </div>
             <div className="flex gap-2">
-              <button type="button" className="rounded-xl border border-slate-300 px-4 py-2" onClick={edit}>Edit this run</button>
+              <button type="button" className="rounded-xl border border-slate-600 px-4 py-2" onClick={edit}>Edit this run</button>
               <button type="button" className="btn-text" disabled={!!busy || !data.pool} onClick={() => void generate()}>Start over with fresh numbers</button>
             </div>
-            <details><summary className="cursor-pointer text-slate-600">See every payout</summary>
+            <details><summary className="cursor-pointer text-slate-400">See every payout</summary>
               <table className="w-full text-sm mt-2"><tbody>
                 {run.rows.map((r) => (
-                  <tr key={r.employee_id} className="border-t border-slate-100"><td className="p-2">{r.employee_name}</td><td className="p-2 text-slate-500">{r.team}</td>
+                  <tr key={r.employee_id} className="border-t border-slate-800"><td className="p-2">{r.employee_name}</td><td className="p-2 text-slate-500">{r.team}</td>
                     <td className="p-2">{r.status === "confirmed" ? "Confirmed" : "Excluded"}</td><td className="p-2 text-right font-semibold">{money(r.payout)}</td></tr>
                 ))}
               </tbody></table>
@@ -232,7 +232,7 @@ export default function BonusPage() {
           </div>
         ) : (
           <div className="space-y-2 text-sm">
-            <div className="text-slate-600">{data.pool ? "Nothing saved for this month yet." : "Set the pool first."}</div>
+            <div className="text-slate-400">{data.pool ? "Nothing saved for this month yet." : "Set the pool first."}</div>
             <button type="button" className="btn-brand" disabled={!!busy || !data.pool} onClick={() => void generate()}>{busy === "generate" ? "Generating…" : "Generate suggested payouts"}</button>
           </div>
         )}
@@ -240,8 +240,8 @@ export default function BonusPage() {
 
       <section className="glass-card rounded-2xl p-5 space-y-2">
         <div className="font-semibold">3 · Export for payroll</div>
-        <div className="text-sm text-slate-600">Every active employee with their status and payout, as a spreadsheet.</div>
-        <button type="button" className="rounded-xl border border-slate-300 px-4 py-2 text-sm inline-flex items-center gap-2" disabled={!run || !!review || !!busy} onClick={() => void exportCsv()}>
+        <div className="text-sm text-slate-400">Every active employee with their status and payout, as a spreadsheet.</div>
+        <button type="button" className="rounded-xl border border-slate-600 px-4 py-2 text-sm inline-flex items-center gap-2" disabled={!run || !!review || !!busy} onClick={() => void exportCsv()}>
           <Download className="w-4 h-4" /> Download CSV</button>
       </section>
     </div>

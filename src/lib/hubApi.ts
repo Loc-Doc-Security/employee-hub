@@ -41,7 +41,7 @@ export const hubPost = <T,>(url: string, body: unknown) =>
 
 export type Reach = { all: boolean; companyIds: string[]; departmentIds: string[] };
 export type Me = {
-  employee: { id: string; first_name: string; last_name: string; email: string; company_id: string; company: string } | null;
+  employee: { id: string; first_name: string; last_name: string; email: string; company_id: string; company: string; company_slug: string } | null;
   permissions: Record<string, Reach>;
   viewAs: { active: boolean; options: { id: string; name: string; roles: string }[] } | null;
 };

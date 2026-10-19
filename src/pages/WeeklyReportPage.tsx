@@ -32,14 +32,14 @@ const shiftWeek = (w: string, weeks: number) => {
   return d.toISOString().slice(0, 10);
 };
 
-const field = "w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm";
+const field = "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm";
 
 function ReportView({ r }: { r: Report }) {
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {(Object.keys(SCALES) as ScaleKey[]).map((k) => (
-          <div key={k} className="rounded-xl border border-slate-200 p-3">
+          <div key={k} className="rounded-xl border border-slate-700 p-3">
             <div className="text-xs text-slate-500">{SCALES[k].title}</div>
             <div className="font-semibold">{label(k, r[k])}</div>
           </div>
@@ -107,7 +107,7 @@ function ThisWeek({ mine, onSubmitted }: { mine: Mine; onSubmitted: (r: Report) 
           <div className="grid grid-cols-5 gap-2" role="group" aria-label={SCALES[k].title}>
             {[1, 2, 3, 4, 5].map((v) => (
               <button key={v} type="button" aria-pressed={scores[k] === v}
-                className={`rounded-xl border py-2 text-sm font-semibold ${scores[k] === v ? "btn-brand" : "border-slate-200 bg-white/70"}`}
+                className={`rounded-xl border py-2 text-sm font-semibold ${scores[k] === v ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}
                 onClick={() => setScores((s) => ({ ...s, [k]: v }))}>{v}</button>
             ))}
           </div>
@@ -125,11 +125,11 @@ function ThisWeek({ mine, onSubmitted }: { mine: Mine; onSubmitted: (r: Report) 
           {ready ? "Submit report" : "Fill in your high and low to submit"}
         </button>
       ) : (
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 space-y-3 text-sm text-slate-800">
+        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 space-y-3 text-sm text-slate-200">
           <div>Once submitted, this week's report can't be changed. Submit now?</div>
           <div className="flex gap-2">
             <button type="button" className="btn-brand" disabled={saving} onClick={submit}>{saving ? "Submitting…" : "Yes, submit"}</button>
-            <button type="button" className="rounded-xl border border-slate-300 px-4 py-2" onClick={() => setConfirming(false)}>Keep editing</button>
+            <button type="button" className="rounded-xl border border-slate-600 px-4 py-2" onClick={() => setConfirming(false)}>Keep editing</button>
           </div>
         </div>
       )}
@@ -160,7 +160,7 @@ function History({ mine }: { mine: Mine }) {
       <div className="flex gap-2 flex-wrap" role="group" aria-label="Time range">
         {RANGES.map((r) => (
           <button key={r.key} type="button" aria-pressed={range === r.key}
-            className={`rounded-xl border px-3 py-1 text-sm ${range === r.key ? "btn-brand" : "border-slate-200 bg-white/70"}`}
+            className={`rounded-xl border px-3 py-1 text-sm ${range === r.key ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}
             onClick={() => setRange(r.key)}>{r.label}</button>
         ))}
       </div>
@@ -178,7 +178,7 @@ function History({ mine }: { mine: Mine }) {
           <tbody>
             {inRange.map((r) => (
               <Fragment key={r.id}>
-                <tr className="border-t border-slate-100">
+                <tr className="border-t border-slate-800">
                   <td className="p-3">{fmtWeek(r.week_start)}</td>
                   <td className="p-3">{r.stress_level}</td><td className="p-3">{r.morale}</td><td className="p-3">{r.workload}</td>
                   <td className="p-3 text-right">
@@ -188,7 +188,7 @@ function History({ mine }: { mine: Mine }) {
                   </td>
                 </tr>
                 {open === r.id && (
-                  <tr className="border-t border-slate-100"><td colSpan={5} className="p-4"><ReportView r={r} /></td></tr>
+                  <tr className="border-t border-slate-800"><td colSpan={5} className="p-4"><ReportView r={r} /></td></tr>
                 )}
               </Fragment>
             ))}
@@ -202,9 +202,9 @@ function History({ mine }: { mine: Mine }) {
 function WeekPicker({ week, setWeek }: { week: string; setWeek: (w: string) => void }) {
   return (
     <div className="flex items-center gap-2 text-sm">
-      <button type="button" className="rounded-xl border border-slate-200 px-3 py-1" onClick={() => setWeek(shiftWeek(week, -1))}>← Prev</button>
+      <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" onClick={() => setWeek(shiftWeek(week, -1))}>← Prev</button>
       <span className="font-semibold">Week of {fmtWeek(week)}</span>
-      <button type="button" className="rounded-xl border border-slate-200 px-3 py-1" onClick={() => setWeek(shiftWeek(week, 1))}>Next →</button>
+      <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" onClick={() => setWeek(shiftWeek(week, 1))}>Next →</button>
     </div>
   );
 }
@@ -229,7 +229,7 @@ function TeamStatus({ initialWeek }: { initialWeek: string }) {
           <table className="w-full text-sm">
             <tbody>
               {rows.map((r) => (
-                <tr key={r.id} className="border-t border-slate-100">
+                <tr key={r.id} className="border-t border-slate-800">
                   <td className="p-3">{r.name}</td>
                   <td className="p-3 text-slate-500">{r.departments || "—"}</td>
                   <td className="p-3">{r.submitted ? "✓ Submitted" : r.on_pto ? "On PTO" : "— Not yet"}</td>
@@ -259,7 +259,7 @@ function AllReports({ initialWeek }: { initialWeek: string }) {
       {rows && rows.length === 0 && <div className="glass-card rounded-2xl p-6 text-sm text-slate-500">No reports for this week.</div>}
       {rows?.map((r) => (
         <div key={r.id} className="glass-card rounded-2xl p-5 space-y-3">
-          <div className="font-semibold">{r.name}{r.is_former && <span className="ml-2 text-xs text-slate-400">former employee</span>}</div>
+          <div className="font-semibold">{r.name}{r.is_former && <span className="ml-2 text-xs text-slate-600">former employee</span>}</div>
           <ReportView r={r} />
         </div>
       ))}
@@ -291,7 +291,7 @@ export default function WeeklyReportPage() {
       <div className="flex gap-2 flex-wrap" role="tablist">
         {tabs.map(([key, name]) => (
           <button key={key} type="button" role="tab" aria-selected={tab === key}
-            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === key ? "btn-brand" : "border-slate-200 bg-white/70"}`}
+            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === key ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}
             onClick={() => setTab(key)}>{name}</button>
         ))}
       </div>

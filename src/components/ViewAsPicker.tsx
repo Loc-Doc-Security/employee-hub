@@ -13,7 +13,7 @@ export default function ViewAsPicker() {
         Dev · viewing as {me.employee ? `${me.employee.first_name} ${me.employee.last_name}` : "—"}
       </div>
       <select
-        className="w-full rounded-lg border border-amber-300 bg-amber-50 px-2 py-1 text-xs text-slate-800"
+        className="w-full rounded-lg border border-amber-300 bg-amber-50 px-2 py-1 text-xs text-slate-200"
         value={current}
         onChange={(e) => setViewAs(e.target.value)}
       >

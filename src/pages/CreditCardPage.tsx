@@ -27,7 +27,7 @@ export function DepartmentBars({ departments }: { departments: Dept[] }) {
       {departments.map((d) => (
         <div key={d.department} className="grid grid-cols-[10rem_1fr_4rem] items-center gap-3 text-sm">
           <span className="truncate">{d.department}</span>
-          <div className="h-2 rounded-full bg-slate-200/70 overflow-hidden">
+          <div className="h-2 rounded-full bg-slate-700/70 overflow-hidden">
             {d.percent != null && <div className="h-full rounded-full" style={{ width: `${d.percent}%`, background: "var(--theme-accent-600, #2563eb)" }} />}
           </div>
           <span className="text-right font-semibold">{show(d.percent)}</span>
@@ -84,19 +84,19 @@ function SyncBar({ onSynced }: { onSynced: () => void }) {
       </div>
       {!status.googleConnected && <div className="text-amber-800">Google isn't connected on this server yet, so the Sheet can't be read.</div>}
       {r?.error && <div className="text-red-700">Last sync failed: {r.error}</div>}
-      {r && !r.error && <div className="text-slate-600">{r.saved} people synced from "{r.tab}". Replaces this week's numbers; earlier weeks are kept.</div>}
+      {r && !r.error && <div className="text-slate-400">{r.saved} people synced from "{r.tab}". Replaces this week's numbers; earlier weeks are kept.</div>}
       {!!r?.unmatched?.length && (
         <details><summary className="cursor-pointer text-amber-800">{r.unmatched.length} row(s) on the Sheet didn't match anyone</summary>
-          <ul className="mt-1 list-disc pl-5 text-slate-600">{r.unmatched.map((u) => <li key={u.name + u.reason}><b>{u.name}</b>: {u.reason}</li>)}</ul>
+          <ul className="mt-1 list-disc pl-5 text-slate-400">{r.unmatched.map((u) => <li key={u.name + u.reason}><b>{u.name}</b>: {u.reason}</li>)}</ul>
         </details>
       )}
       {editing && (
         <div className="space-y-1">
-          {status.serviceAccountEmail && <div className="text-slate-600">Share the Sheet with <code className="font-mono">{status.serviceAccountEmail}</code> as Viewer.</div>}
+          {status.serviceAccountEmail && <div className="text-slate-400">Share the Sheet with <code className="font-mono">{status.serviceAccountEmail}</code> as Viewer.</div>}
           <div className="flex gap-2 flex-wrap">
             <input value={sheet} onChange={(e) => setSheet(e.target.value)} placeholder="Paste the Sheet's link (open the right tab first)"
-              className="flex-1 min-w-[16rem] rounded-xl border border-slate-200 bg-white/70 px-3 py-2" />
-            <button type="button" className="rounded-xl border border-slate-300 px-4 py-2" disabled={!sheet.trim() || !!busy} onClick={() => void act("save")}>Save</button>
+              className="flex-1 min-w-[16rem] rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2" />
+            <button type="button" className="rounded-xl border border-slate-600 px-4 py-2" disabled={!sheet.trim() || !!busy} onClick={() => void act("save")}>Save</button>
           </div>
         </div>
       )}
@@ -137,7 +137,7 @@ function Report() {
           <p className="text-sm text-slate-500">Receipts uploaded vs. card purchases over the last 28 days, as of the week of {fmt(data.week)}.</p>
         </div>
         {data.weeks.length > 1 && (
-          <select className="rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm" value={data.week} onChange={(e) => setWeek(e.target.value)}>
+          <select className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" value={data.week} onChange={(e) => setWeek(e.target.value)}>
             {data.weeks.map((w) => <option key={w} value={w}>Week of {fmt(w)}</option>)}
           </select>
         )}
@@ -173,7 +173,7 @@ function Report() {
           <table className="w-full text-sm">
             <tbody>
               {data.team.map((t) => (
-                <tr key={t.name} className="border-t border-slate-100">
+                <tr key={t.name} className="border-t border-slate-800">
                   <td className="p-3"><div className="font-semibold">{t.name}</div><div className="text-xs text-slate-500">{t.department}</div></td>
                   <td className="p-3">{t.receipts} of {t.purchases}</td>
                   <td className="p-3 font-semibold">{show(t.percent)}</td>

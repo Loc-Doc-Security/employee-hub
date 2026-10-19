@@ -15,7 +15,7 @@ type Rule = { id: string; name: string; trigger: string; amount: number | null; 
 
 const STATUSES = ["Pending Pricing", "Ready to Order", "Ordered", "Waiting - Bulk Order", "Partially Received", "Received", "Waiting for Pickup"];
 const TRIGGERS: Record<string, string> = { birthday: "On their birthday (each year)", on_hire: "When hired (once)", hire_anniversary: "On their work anniversary (each year)", monthly: "Every month" };
-const field = "w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm";
+const field = "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm";
 
 function OrderAdmin({ o, onChanged }: { o: Order; onChanged: () => void }) {
   const [prices, setPrices] = useState<Record<string, string>>(() => Object.fromEntries(o.items.map((i) => [i.id, String(o.order_type === "sanmar" ? i.branding?.clothingPrice ?? i.unitPrice : i.unitPrice)])));
@@ -25,14 +25,14 @@ function OrderAdmin({ o, onChanged }: { o: Order; onChanged: () => void }) {
   const act = async (fn: () => Promise<unknown>, done: string) => { setMsg(""); try { await fn(); setMsg(done); onChanged(); } catch (e) { setMsg((e as Error).message); } };
   const pending = o.status === "pending_pricing";
   return (
-    <div className="border-t border-slate-200 pt-3 space-y-3 text-sm">
-      <div className="text-slate-600">{o.is_stock_order ? "Stock order" : o.customer_name}</div>
+    <div className="border-t border-slate-700 pt-3 space-y-3 text-sm">
+      <div className="text-slate-400">{o.is_stock_order ? "Stock order" : o.customer_name}</div>
       {pending && (
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 space-y-2 text-slate-800">
+        <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 space-y-2 text-slate-200">
           <div className="font-semibold">Confirm prices{o.order_type === "sanmar" ? " (clothing price; logo fees are added automatically)" : ""}</div>
           {o.items.map((i) => (
             <label key={i.id} className="flex items-center justify-between gap-3">{i.name || "Item"} × {i.quantity}
-              <input className="w-28 rounded-lg border border-slate-300 px-2 py-1" inputMode="decimal" value={prices[i.id]} onChange={(e) => setPrices({ ...prices, [i.id]: e.target.value })} /></label>
+              <input className="w-28 rounded-lg border border-slate-600 px-2 py-1" inputMode="decimal" value={prices[i.id]} onChange={(e) => setPrices({ ...prices, [i.id]: e.target.value })} /></label>
           ))}
           <button type="button" className="btn-brand" onClick={() => void act(async () => {
             const r = await hubPost<{ pointsCharged: number; difference: number }>(`/api/shop/admin/orders/${o.id}/confirm`, { lines: Object.entries(prices).map(([id, price]) => ({ id, price })) });
@@ -55,7 +55,7 @@ function OrderAdmin({ o, onChanged }: { o: Order; onChanged: () => void }) {
           <button type="button" className="rounded-xl border border-red-300 px-3 py-1 text-red-700"
             onClick={() => { const reason = prompt(`Cancel order and refund ${o.points_charged} points? Reason:`); if (reason) void act(() => hubPost(`/api/shop/admin/orders/${o.id}/cancel`, { reason }), "Cancelled and refunded."); }}>Cancel & refund</button>
         )}
-        <button type="button" className="rounded-xl border border-slate-300 px-3 py-1"
+        <button type="button" className="rounded-xl border border-slate-600 px-3 py-1"
           onClick={() => void act(() => hubPatch(`/api/shop/admin/orders/${o.id}`, { archived: !o.archived_at }), o.archived_at ? "Unarchived." : "Archived.")}>{o.archived_at ? "Unarchive" : "Archive"}</button>
         {msg && <span className="self-center text-xs text-slate-500">{msg}</span>}
       </div>
@@ -77,9 +77,9 @@ function Orders() {
       <div className="flex gap-2 flex-wrap">
         {[["open", "Open"], ["archived", "Archived"], ["all", "All"]].map(([k, n]) => (
           <button key={k} type="button" aria-pressed={view === k} onClick={() => setView(k)}
-            className={`rounded-xl border px-3 py-1 text-sm ${view === k ? "btn-brand" : "border-slate-200 bg-white/70"}`}>{n}</button>
+            className={`rounded-xl border px-3 py-1 text-sm ${view === k ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}>{n}</button>
         ))}
-        <input className="rounded-xl border border-slate-200 bg-white/70 px-3 py-1 text-sm" placeholder="Search name or order #" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <input className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-1 text-sm" placeholder="Search name or order #" value={search} onChange={(e) => setSearch(e.target.value)} />
         {pending > 0 && <span className="self-center text-sm font-semibold">{pending} waiting for price confirmation</span>}
       </div>
       {!orders ? <div className="text-sm text-slate-500">Loading…</div> : shown.map((o) => <OrderCard key={`${o.id}-${o.status}-${o.points_charged}-${o.archived_at}`} o={o} admin={<OrderAdmin o={o} onChanged={() => void load()} />} />)}
@@ -106,7 +106,7 @@ function CatalogEditor({ item, onDone }: { item: CatalogItem | null; onDone: () 
     <div className="glass-card rounded-2xl p-5 space-y-3">
       <div className="grid grid-cols-1 md:grid-cols-[10rem_1fr] gap-4">
         <label className="cursor-pointer">
-          {photoUrl ? <img src={photoUrl} alt={name} className="h-40 w-full rounded-xl object-cover" /> : <div className="flex h-40 items-center justify-center rounded-xl bg-slate-100 text-xs text-slate-500">{busy ? "Uploading…" : "Add photo"}</div>}
+          {photoUrl ? <img src={photoUrl} alt={name} className="h-40 w-full rounded-xl object-cover" /> : <div className="flex h-40 items-center justify-center rounded-xl bg-slate-800 text-xs text-slate-500">{busy ? "Uploading…" : "Add photo"}</div>}
           <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
             const f = e.target.files?.[0]; if (!f) return; setBusy(true);
             try { setPhoto(await hubUpload(await shrinkImage(f).catch(() => f), "catalog")); } catch (err) { setError((err as Error).message); } finally { setBusy(false); }
@@ -128,8 +128,8 @@ function CatalogEditor({ item, onDone }: { item: CatalogItem | null; onDone: () 
       {error && <div className="text-sm text-red-700">{error}</div>}
       <div className="flex gap-2 flex-wrap">
         <button type="button" className="btn-brand" disabled={busy} onClick={() => void save()}>{item ? "Save" : "Add item"}</button>
-        <button type="button" className="rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={onDone}>Cancel</button>
-        {item && <button type="button" className="ml-auto rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={() => void save({ isVisible: !item.is_visible })}>{item.is_visible ? "Hide from the shop" : "Show in the shop"}</button>}
+        <button type="button" className="rounded-xl border border-slate-600 px-4 py-2 text-sm" onClick={onDone}>Cancel</button>
+        {item && <button type="button" className="ml-auto rounded-xl border border-slate-600 px-4 py-2 text-sm" onClick={() => void save({ isVisible: !item.is_visible })}>{item.is_visible ? "Hide from the shop" : "Show in the shop"}</button>}
       </div>
     </div>
   );
@@ -146,8 +146,8 @@ function Catalog() {
       <button type="button" className="btn-brand" onClick={() => setEditing("new")}>+ Add catalog item</button>
       <div className="glass-card rounded-2xl overflow-hidden">
         {(items ?? []).map((c) => (
-          <button key={c.id} type="button" onClick={() => setEditing(c)} className="flex w-full justify-between gap-3 border-t border-slate-100 px-4 py-3 text-left text-sm first:border-t-0 hover:bg-slate-50/60">
-            <span className="font-semibold">{c.name}{!c.is_visible && <span className="ml-2 text-xs font-normal text-slate-400">hidden</span>}</span>
+          <button key={c.id} type="button" onClick={() => setEditing(c)} className="flex w-full justify-between gap-3 border-t border-slate-800 px-4 py-3 text-left text-sm first:border-t-0 hover:bg-slate-900/60">
+            <span className="font-semibold">{c.name}{!c.is_visible && <span className="ml-2 text-xs font-normal text-slate-600">hidden</span>}</span>
             <span className="text-slate-500">{c.options.map((o) => o.label).join(", ") || "no options"} · {c.price} pts</span>
           </button>
         ))}
@@ -183,7 +183,7 @@ function Points() {
         <div className="glass-card rounded-2xl overflow-hidden max-h-[32rem] overflow-y-auto">
           {(people ?? []).filter((p) => !s || p.name.toLowerCase().includes(s)).map((p) => (
             <button key={p.id} type="button" onClick={() => { setOpen(p.id); setMsg(""); }}
-              className={`flex w-full justify-between border-t border-slate-100 px-4 py-2 text-left text-sm first:border-t-0 ${open === p.id ? "bg-slate-100/80" : "hover:bg-slate-50/60"}`}>
+              className={`flex w-full justify-between border-t border-slate-800 px-4 py-2 text-left text-sm first:border-t-0 ${open === p.id ? "bg-slate-800/80" : "hover:bg-slate-900/60"}`}>
               <span>{p.name}</span><span className="font-semibold">{p.balance}</span>
             </button>
           ))}
@@ -200,7 +200,7 @@ function Points() {
           {msg && <div className="text-xs text-slate-500">{msg}</div>}
           <div className="space-y-1">
             {history.map((h) => (
-              <div key={h.id} className="flex justify-between gap-3 border-t border-slate-100 py-2 text-sm">
+              <div key={h.id} className="flex justify-between gap-3 border-t border-slate-800 py-2 text-sm">
                 <span>{h.reason || "—"} <span className="text-xs text-slate-500">· {new Date(h.created_at).toLocaleDateString()} · {h.by}</span></span>
                 <span className="font-semibold">{h.amount > 0 ? "+" : ""}{h.amount}</span>
               </div>
@@ -221,11 +221,11 @@ function Rules() {
   const act = async (fn: () => Promise<unknown>, done: string) => { setMsg(""); try { await fn(); setMsg(done); await load(); } catch (e) { setMsg((e as Error).message); } };
   return (
     <div className="space-y-3">
-      <p className="text-sm text-slate-600">Rules run automatically every hour. Each person is paid at most once per year (or month), and anything missed in the last week is caught up. "When hired" only pays people hired after its amount was set.</p>
+      <p className="text-sm text-slate-400">Rules run automatically every hour. Each person is paid at most once per year (or month), and anything missed in the last week is caught up. "When hired" only pays people hired after its amount was set.</p>
       <div className="glass-card rounded-2xl overflow-hidden">
         {(rules ?? []).map((r) => (
-          <div key={r.id} className="grid grid-cols-1 md:grid-cols-[1fr_9rem_auto] items-center gap-3 border-t border-slate-100 px-4 py-3 text-sm first:border-t-0">
-            <div><div className="font-semibold">{r.name}{!r.is_active && <span className="ml-2 text-xs font-normal text-slate-400">off</span>}</div>
+          <div key={r.id} className="grid grid-cols-1 md:grid-cols-[1fr_9rem_auto] items-center gap-3 border-t border-slate-800 px-4 py-3 text-sm first:border-t-0">
+            <div><div className="font-semibold">{r.name}{!r.is_active && <span className="ml-2 text-xs font-normal text-slate-600">off</span>}</div>
               <div className="text-xs text-slate-500">{TRIGGERS[r.trigger]} · paid {r.times_paid} time{r.times_paid === 1 ? "" : "s"}{r.amount == null ? " · no amount set, not paying" : ""}</div></div>
             <input className={field} placeholder="Points" defaultValue={r.amount ?? ""} inputMode="numeric"
               onBlur={(e) => e.target.value !== String(r.amount ?? "") && void act(() => hubPatch(`/api/points/admin/rules/${r.id}`, { amount: e.target.value }), "Saved.")} />
@@ -242,7 +242,7 @@ function Rules() {
           <button type="button" className="btn-brand" onClick={() => void act(async () => { await hubPost("/api/points/admin/rules", draft); setDraft({ name: "", trigger: "hire_anniversary", amount: "" }); }, "Rule added.")}>Add</button>
         </div>
       </div>
-      {msg && <div className="text-sm text-slate-600">{msg}</div>}
+      {msg && <div className="text-sm text-slate-400">{msg}</div>}
     </div>
   );
 }
@@ -255,7 +255,7 @@ export default function ShopAdminPage() {
       <div className="flex gap-2 flex-wrap" role="tablist">
         {([["orders", "Orders"], ["catalog", "Catalog"], ["points", "Points"], ["rules", "Point rules"]] as const).map(([k, n]) => (
           <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
-            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === k ? "btn-brand" : "border-slate-200 bg-white/70"}`}>{n}</button>
+            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === k ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}>{n}</button>
         ))}
       </div>
       {tab === "orders" && <Orders />}

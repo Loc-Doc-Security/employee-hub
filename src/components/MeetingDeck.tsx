@@ -42,7 +42,7 @@ function Photo({ id, caption }: { id: string; caption: string }) {
   const url = useUploadUrl(id);
   return (
     <figure className="space-y-1">
-      {url ? <img src={url} alt={caption} className="h-56 w-full rounded-xl object-cover" /> : <div className="h-56 rounded-xl bg-slate-200/60" />}
+      {url ? <img src={url} alt={caption} className="h-56 w-full rounded-xl object-cover" /> : <div className="h-56 rounded-xl bg-slate-700/60" />}
       {caption && <figcaption className="text-sm text-slate-500">{caption}</figcaption>}
     </figure>
   );
@@ -52,7 +52,7 @@ function HBar({ label, sub, value, max = 100, muted }: { label: string; sub?: st
   return (
     <div className="grid grid-cols-[minmax(9rem,14rem)_1fr_4.5rem] items-center gap-4">
       <div className="truncate"><span className="font-semibold">{label}</span>{sub && <span className="text-slate-500"> {sub}</span>}</div>
-      <div className="h-4 rounded-full bg-slate-200/70 overflow-hidden">
+      <div className="h-4 rounded-full bg-slate-700/70 overflow-hidden">
         {value != null && <div className="h-full rounded-full" style={{ width: `${(value / max) * 100}%`, background: muted ? "var(--theme-brand-secondary-400, #94a3b8)" : "var(--theme-accent-600, #2563eb)" }} />}
       </div>
       <div className="text-right font-bold tabular-nums">{value ?? "—"}</div>
@@ -116,10 +116,10 @@ export default function MeetingDeck() {
         return (
           <div className="space-y-3">
             {meetings.slice(0, 5).map((m) => (
-              <div key={m.id} className={`rounded-2xl border p-5 ${m.date === meetingDate ? "border-slate-400" : "border-slate-200"}`}>
+              <div key={m.id} className={`rounded-2xl border p-5 ${m.date === meetingDate ? "border-slate-600" : "border-slate-700"}`}>
                 <div className="text-sm text-slate-500">{fmt(m.date)}{m.date === meetingDate ? " · today" : ""}</div>
                 <div className="text-2xl font-bold">{m.topic || "Weekly meeting"}</div>
-                <div className="text-slate-600">Tech Spotlight: {m.presenter ?? m.presenter_name_legacy ?? "—"}</div>
+                <div className="text-slate-400">Tech Spotlight: {m.presenter ?? m.presenter_name_legacy ?? "—"}</div>
               </div>
             ))}
             {!meetings.length && <div className="text-slate-500">Nothing on the schedule yet.</div>}
@@ -127,7 +127,7 @@ export default function MeetingDeck() {
         );
       case "positive":
         return (
-          <div className="mx-auto max-w-3xl rounded-3xl border border-amber-200 bg-amber-50/70 p-12 text-center space-y-4 text-slate-800">
+          <div className="mx-auto max-w-3xl rounded-3xl border border-amber-200 bg-amber-50/70 p-12 text-center space-y-4 text-slate-200">
             <div className="text-6xl">🌟</div>
             <div className="text-4xl font-black">One Positive Thing</div>
             <p className="text-2xl">{weeklyPrompt(meetingDate)}</p>
@@ -137,7 +137,7 @@ export default function MeetingDeck() {
         return (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {weeklyCoreValues(meetingDate).map((v) => (
-              <div key={v.value} className="rounded-3xl border border-slate-200 p-10 space-y-3">
+              <div key={v.value} className="rounded-3xl border border-slate-700 p-10 space-y-3">
                 <div className="text-xl text-slate-500">{v.trait}</div>
                 <div className="text-5xl font-black">{v.value}</div>
                 <p className="text-xl leading-relaxed">{v.desc}</p>
@@ -159,11 +159,11 @@ export default function MeetingDeck() {
             <div className="text-slate-500">Week of {fmt(addDays(meetingDate, -7))} – {fmt(addDays(meetingDate, -1))}</div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[["Average", avg == null ? "—" : `${avg}%`], ["Submitted", submitted.length], ["Missing", missing.length], ["PTO", clean.filter((p) => p.status === "pto").length]].map(([l, v]) => (
-                <div key={l} className="rounded-2xl border border-slate-200 p-5"><div className="text-slate-500">{l}</div><div className="text-4xl font-black">{v}</div></div>
+                <div key={l} className="rounded-2xl border border-slate-700 p-5"><div className="text-slate-500">{l}</div><div className="text-4xl font-black">{v}</div></div>
               ))}
             </div>
             <div className="space-y-3">{branches.map((x) => <HBar key={x.b} label={x.b} sub={`(${x.n})`} value={x.avg} />)}</div>
-            {missing.length > 0 && <div className="text-slate-600"><span className="font-semibold">Missing:</span> {missing.map((p) => p.name).join(", ")}</div>}
+            {missing.length > 0 && <div className="text-slate-400"><span className="font-semibold">Missing:</span> {missing.map((p) => p.name).join(", ")}</div>}
           </div>
         );
       }
@@ -180,7 +180,7 @@ export default function MeetingDeck() {
             <div className="space-y-2">{ranked.map((r) => <HBar key={r.id} label={r.name || `Van ${r.vehicle_label}`} sub={`#${r.vehicle_label}`} value={r.score} />)}</div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
               {RULES.map(([k, l]) => (
-                <div key={k} className="rounded-2xl border border-slate-200 p-4"><div className="text-sm text-slate-500">{l}</div><div className="text-2xl font-bold">{drivers.ruleAverages[k] ?? "—"}</div></div>
+                <div key={k} className="rounded-2xl border border-slate-700 p-4"><div className="text-sm text-slate-500">{l}</div><div className="text-2xl font-bold">{drivers.ruleAverages[k] ?? "—"}</div></div>
               ))}
             </div>
             {drivers.rows.some((r) => r.is_parked) && (
@@ -207,12 +207,12 @@ export default function MeetingDeck() {
               <div key={s.id} className="space-y-4">
                 <div><div className="text-4xl font-black">{s.title}</div><div className="text-xl text-slate-500">{s.presenter}</div></div>
                 {s.slides_url ? (
-                  <iframe title={s.title} src={slidesEmbed(s.slides_url)} className="w-full aspect-video rounded-2xl border border-slate-200" allowFullScreen />
+                  <iframe title={s.title} src={slidesEmbed(s.slides_url)} className="w-full aspect-video rounded-2xl border border-slate-700" allowFullScreen />
                 ) : (
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xl">
-                      <div className="rounded-2xl border border-slate-200 p-5"><div className="text-sm text-slate-500">Problem</div><div className="whitespace-pre-wrap">{s.problem}</div></div>
-                      <div className="rounded-2xl border border-slate-200 p-5"><div className="text-sm text-slate-500">Solution</div><div className="whitespace-pre-wrap">{s.solution}</div></div>
+                      <div className="rounded-2xl border border-slate-700 p-5"><div className="text-sm text-slate-500">Problem</div><div className="whitespace-pre-wrap">{s.problem}</div></div>
+                      <div className="rounded-2xl border border-slate-700 p-5"><div className="text-sm text-slate-500">Solution</div><div className="whitespace-pre-wrap">{s.solution}</div></div>
                     </div>
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">{s.photos.map((p) => <Photo key={p.uploadId} id={p.uploadId} caption={p.caption} />)}</div>
                   </>
@@ -228,7 +228,7 @@ export default function MeetingDeck() {
           <div className="space-y-4">
             <div className="text-4xl font-black">{meeting.topic || "Weekly meeting"}</div>
             {meeting.presentation_url && meeting.presentation_type === "slides" && (
-              <iframe title="Agenda slides" src={slidesEmbed(meeting.presentation_url)} className="w-full aspect-video rounded-2xl border border-slate-200" allowFullScreen />
+              <iframe title="Agenda slides" src={slidesEmbed(meeting.presentation_url)} className="w-full aspect-video rounded-2xl border border-slate-700" allowFullScreen />
             )}
             {meeting.presentation_url && meeting.presentation_type !== "slides" && (
               <a href={meeting.presentation_url} target="_blank" rel="noreferrer" className="btn-brand inline-block">Open the presentation ↗</a>
@@ -248,15 +248,15 @@ export default function MeetingDeck() {
             <h2 className="text-3xl font-black">{SLIDES[i].label}</h2>
           </div>
           <div className="flex gap-2">
-            <button type="button" className="rounded-xl border border-slate-300 px-3 py-2" disabled={i === 0} onClick={() => go(-1)} aria-label="Previous slide">←</button>
-            <button type="button" className="rounded-xl border border-slate-300 px-3 py-2" disabled={i === SLIDES.length - 1} onClick={() => go(1)} aria-label="Next slide">→</button>
+            <button type="button" className="rounded-xl border border-slate-600 px-3 py-2" disabled={i === 0} onClick={() => go(-1)} aria-label="Previous slide">←</button>
+            <button type="button" className="rounded-xl border border-slate-600 px-3 py-2" disabled={i === SLIDES.length - 1} onClick={() => go(1)} aria-label="Next slide">→</button>
             <button type="button" className="btn-brand" onClick={() => void togglePresenter()}>{presenter ? "Exit presenter mode" : "Presenter mode"}</button>
           </div>
         </div>
         <div className="flex gap-1 flex-wrap">
           {SLIDES.map((s, n) => (
             <button key={s.key} type="button" onClick={() => setI(n)} aria-current={n === i}
-              className={`rounded-full px-3 py-1 text-xs ${n === i ? "btn-brand" : "border border-slate-200 text-slate-500"}`}>{s.label}</button>
+              className={`rounded-full px-3 py-1 text-xs ${n === i ? "btn-brand" : "border border-slate-700 text-slate-500"}`}>{s.label}</button>
           ))}
         </div>
         <div className="glass-card rounded-3xl p-8">{body()}</div>

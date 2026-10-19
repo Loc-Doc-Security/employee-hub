@@ -14,7 +14,7 @@ const KINDS: { kind: Kind; label: string; chip: string; dot: string }[] = [
   { kind: "holiday", label: "Holidays", chip: "bg-red-100 text-red-800", dot: "bg-red-500" },
   { kind: "event", label: "Events", chip: "bg-blue-100 text-blue-800", dot: "bg-blue-500" },
   { kind: "meeting", label: "Wednesday Meeting", chip: "bg-violet-100 text-violet-800", dot: "bg-violet-500" },
-  { kind: "pto", label: "Who's out", chip: "bg-slate-200 text-slate-700", dot: "bg-slate-500" },
+  { kind: "pto", label: "Who's out", chip: "bg-slate-700 text-slate-300", dot: "bg-slate-500" },
   { kind: "birthday", label: "Birthdays", chip: "bg-pink-100 text-pink-800", dot: "bg-pink-500" },
   { kind: "anniversary", label: "Work anniversaries", chip: "bg-amber-100 text-amber-800", dot: "bg-amber-500" },
 ];
@@ -57,13 +57,13 @@ function useItems(from: string, to: string) {
 
 function ItemLine({ i }: { i: Item }) {
   return (
-    <div className="flex gap-3 py-2 border-t border-slate-100 first:border-t-0">
+    <div className="flex gap-3 py-2 border-t border-slate-800 first:border-t-0">
       <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${STYLE[i.kind].dot}`} />
       <div className="min-w-0 text-sm">
         <div className="font-semibold">{i.title}{i.officeClosed && <span className="ml-2 text-xs font-semibold text-red-700">Office closed</span>}</div>
         {when(i) && <div className="text-slate-500">{when(i)}</div>}
         {i.location && <div className="text-slate-500">{i.location}</div>}
-        {i.detail && <div className="text-slate-600 whitespace-pre-line">{i.detail}</div>}
+        {i.detail && <div className="text-slate-400 whitespace-pre-line">{i.detail}</div>}
       </div>
     </div>
   );
@@ -100,21 +100,21 @@ function MonthView({ hidden }: { hidden: Set<Kind> }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <button type="button" className="rounded-lg border border-slate-200 p-1.5" aria-label="Previous month" onClick={() => shift(-1)}><ChevronLeft className="w-4 h-4" /></button>
+        <button type="button" className="rounded-lg border border-slate-700 p-1.5" aria-label="Previous month" onClick={() => shift(-1)}><ChevronLeft className="w-4 h-4" /></button>
         <h2 className="text-xl font-semibold min-w-[11rem] text-center">{at(first).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" })}</h2>
-        <button type="button" className="rounded-lg border border-slate-200 p-1.5" aria-label="Next month" onClick={() => shift(1)}><ChevronRight className="w-4 h-4" /></button>
+        <button type="button" className="rounded-lg border border-slate-700 p-1.5" aria-label="Next month" onClick={() => shift(1)}><ChevronRight className="w-4 h-4" /></button>
         <button type="button" className="btn-text text-sm" onClick={() => { setMonth(today.slice(0, 7)); setSelected(today); }}>Today</button>
       </div>
       {error && <div className="text-sm text-red-700">{error}</div>}
       <div className="glass-card rounded-2xl overflow-hidden">
-        <div className="grid grid-cols-7 text-xs text-slate-500 border-b border-slate-200">
+        <div className="grid grid-cols-7 text-xs text-slate-500 border-b border-slate-700">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => <div key={d} className="p-2">{d}</div>)}
         </div>
         <div className="grid grid-cols-7">
           {days.slice(0, weeks * 7).map((d) => (
             <button key={d} type="button" onClick={() => setSelected(d)}
-              className={`min-h-[5.5rem] border-b border-r border-slate-100 p-1 text-left align-top ${d.slice(0, 7) !== month ? "bg-slate-50/60 text-slate-400" : ""} ${selected === d ? "ring-2 ring-inset ring-[var(--theme-accent-500,#3b82f6)]" : ""}`}>
-              <div className={`mb-0.5 text-xs font-semibold ${d === today ? "inline-flex h-5 w-5 items-center justify-center rounded-full btn-brand p-0" : ""}`}>{Number(d.slice(8))}</div>
+              className={`min-h-[5.5rem] border-b border-r border-slate-800 p-1 text-left align-top ${d.slice(0, 7) !== month ? "bg-slate-900/60 text-slate-600" : ""} ${selected === d ? "ring-2 ring-inset ring-[var(--theme-accent-500,#3b82f6)]" : ""}`}>
+              <div className={`mb-0.5 text-xs font-semibold ${d === today ? "hub-today" : ""}`}>{Number(d.slice(8))}</div>
               <DayChips items={on(d)} />
             </button>
           ))}
@@ -166,13 +166,13 @@ function EventForm({ initial, onDone }: { initial: Omit<EventRow, "id"> & { id?:
     try { if (f.id) await hubPut(`/api/calendar/events/${f.id}`, body); else await hubPost("/api/calendar/events", body); onDone(); }
     catch (e) { setMsg((e as Error).message); } finally { setBusy(false); }
   };
-  const input = "mt-1 w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2";
+  const input = "mt-1 w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2";
   return (
     <div className="glass-card rounded-2xl p-5 space-y-3">
       <div className="font-semibold">{f.id ? "Edit" : "Add"} {f.kind === "holiday" ? "holiday" : "event"}</div>
       <div className="flex gap-2">
         {(["event", "holiday"] as const).map((k) => (
-          <button key={k} type="button" onClick={() => set({ kind: k })} className={`rounded-xl border px-4 py-2 text-sm font-semibold ${f.kind === k ? "btn-brand" : "border-slate-200 bg-white/70"}`}>{k === "event" ? "Event" : "Holiday"}</button>
+          <button key={k} type="button" onClick={() => set({ kind: k })} className={`rounded-xl border px-4 py-2 text-sm font-semibold ${f.kind === k ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}>{k === "event" ? "Event" : "Holiday"}</button>
         ))}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
@@ -187,7 +187,7 @@ function EventForm({ initial, onDone }: { initial: Omit<EventRow, "id"> & { id?:
       </div>
       <div className="flex gap-2 items-center">
         <button type="button" className="btn-brand" disabled={busy || !f.title.trim()} onClick={() => void save()}>{busy ? "Saving…" : "Save"}</button>
-        <button type="button" className="rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={onDone}>Cancel</button>
+        <button type="button" className="rounded-xl border border-slate-600 px-4 py-2 text-sm" onClick={onDone}>Cancel</button>
         {msg && <span className="text-sm text-red-700">{msg}</span>}
       </div>
     </div>
@@ -216,11 +216,11 @@ function Manage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 flex-wrap">
-        <select className="rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm" value={year} onChange={(e) => setYear(Number(e.target.value))}>
+        <select className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" value={year} onChange={(e) => setYear(Number(e.target.value))}>
           {[-1, 0, 1, 2].map((n) => new Date().getFullYear() + n).map((y) => <option key={y} value={y}>{y}</option>)}
         </select>
         <button type="button" className="btn-brand" onClick={() => setEditing(blank())}>Add an event or holiday</button>
-        <button type="button" className="rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={() => void addHolidays()}>Add the standard holidays for {year}</button>
+        <button type="button" className="rounded-xl border border-slate-600 px-4 py-2 text-sm" onClick={() => void addHolidays()}>Add the standard holidays for {year}</button>
       </div>
       <p className="text-xs text-slate-500">Standard holidays: New Year's Day, Memorial Day, Independence Day, Labor Day, Thanksgiving and the day after, Christmas Eve and Christmas Day, each on the day the office is closed (Saturday → Friday, Sunday → Monday). Edit or remove any that don't apply.</p>
       {msg && <div className={`text-sm ${msg.ok ? "text-emerald-700" : "text-red-700"}`}>{msg.text}</div>}
@@ -229,7 +229,7 @@ function Manage() {
         <table className="w-full text-sm">
           <tbody>
             {(events ?? []).map((e) => (
-              <tr key={e.id} className="border-t border-slate-100 first:border-t-0">
+              <tr key={e.id} className="border-t border-slate-800 first:border-t-0">
                 <td className="p-3 whitespace-nowrap">{fmtShort(e.starts_on)}{e.ends_on !== e.starts_on ? ` – ${fmtShort(e.ends_on)}` : ""}</td>
                 <td className="p-3"><span className={`mr-2 rounded px-1.5 text-xs ${STYLE[e.kind].chip}`}>{e.kind === "holiday" ? "Holiday" : "Event"}</span><span className="font-semibold">{e.title}</span>
                   {e.office_closed && <span className="ml-2 text-xs text-red-700">Office closed</span>}</td>
@@ -265,7 +265,7 @@ export default function CalendarPage() {
         <div className="flex gap-2" role="tablist">
           {tabs.map(([k, n]) => (
             <button key={k} type="button" role="tab" aria-selected={view === k} onClick={() => setView(k)}
-              className={`rounded-xl border px-4 py-2 text-sm font-semibold ${view === k ? "btn-brand" : "border-slate-200 bg-white/70"}`}>{n}</button>
+              className={`rounded-xl border px-4 py-2 text-sm font-semibold ${view === k ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}>{n}</button>
           ))}
         </div>
       </div>
@@ -273,7 +273,7 @@ export default function CalendarPage() {
         <div className="flex gap-2 flex-wrap">
           {KINDS.map((k) => (
             <button key={k.kind} type="button" aria-pressed={!hidden.has(k.kind)} onClick={() => toggle(k.kind)}
-              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs ${hidden.has(k.kind) ? "border-slate-200 text-slate-400 line-through" : "border-slate-300 bg-white/70"}`}>
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs ${hidden.has(k.kind) ? "border-slate-700 text-slate-600 line-through" : "border-slate-600 bg-slate-900/70"}`}>
               <span className={`h-2 w-2 rounded-full ${k.dot}`} />{k.label}</button>
           ))}
         </div>

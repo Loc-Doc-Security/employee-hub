@@ -45,7 +45,7 @@ function Card({ r, badge }: { r: Resource; badge?: string }) {
           {badge && <span className="mr-2 rounded-full px-2 py-0.5 text-xs font-semibold align-middle" style={{ background: "var(--theme-accent-100, #dbeafe)", color: "var(--theme-accent-800, #1e40af)" }}>{badge}</span>}
           {r.title}
         </span>
-        {(r.snippet || r.description) && <span className="block text-sm text-slate-600 line-clamp-2">{r.snippet ?? r.description}</span>}
+        {(r.snippet || r.description) && <span className="block text-sm text-slate-400 line-clamp-2">{r.snippet ?? r.description}</span>}
         <span className="block text-xs text-slate-500">{badge ? `${r.category} · ` : ""}Updated {fmt(r.updatedAt)}{r.scope === "oms" ? " · OMS-wide" : ""}</span>
       </span>
     </Link>
@@ -87,22 +87,22 @@ function Browse({ onManage }: { onManage: (() => void) | null }) {
     <div className="space-y-4">
       <div className="flex items-center gap-3 flex-wrap">
         <label className="relative flex-1 min-w-[16rem]">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
           <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search titles and the text inside documents…"
-            className="w-full rounded-xl border border-slate-200 bg-white/70 pl-9 pr-3 py-2 text-sm" aria-label="Search resources" />
+            className="w-full rounded-xl border border-slate-700 bg-slate-900/70 pl-9 pr-3 py-2 text-sm" aria-label="Search resources" />
         </label>
         {browsing && groups.length > 1 && (
           <button type="button" className="btn-text" onClick={() => setAll(allCollapsed ? [] : groups.map(([c]) => c))}>
             {allCollapsed ? "Expand all" : "Collapse all"}
           </button>
         )}
-        {onManage && <button type="button" className="rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={onManage}>Manage</button>}
+        {onManage && <button type="button" className="rounded-xl border border-slate-600 px-4 py-2 text-sm" onClick={onManage}>Manage</button>}
       </div>
       {categories.length > 2 && (
         <div className="flex gap-2 flex-wrap">
           {categories.map((c) => (
             <button key={c} type="button" onClick={() => setCategory(c)}
-              className={`rounded-full border px-3 py-1 text-sm ${category === c ? "btn-brand" : "border-slate-200 bg-white/70"}`}>{c}</button>
+              className={`rounded-full border px-3 py-1 text-sm ${category === c ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}>{c}</button>
           ))}
         </div>
       )}
@@ -177,25 +177,25 @@ function DriveFolder({ s, admin, reload }: { s: ScopeAdmin; admin: AdminData; re
         </div>
       )}
       {admin.serviceAccountEmail && (
-        <div className="text-sm text-slate-600">Share the folder with <code className="font-mono">{admin.serviceAccountEmail}</code> as <b>Viewer</b>.</div>
+        <div className="text-sm text-slate-400">Share the folder with <code className="font-mono">{admin.serviceAccountEmail}</code> as <b>Viewer</b>.</div>
       )}
       {s.source ? (
         <div className="text-sm space-y-1">
           <div><a className="underline" href={s.source.folderUrl} target="_blank" rel="noreferrer">Open the folder in Drive</a>
             {s.source.lastSyncedAt && <span className="text-slate-500"> · last synced {new Date(s.source.lastSyncedAt).toLocaleString()}</span>}</div>
           {r?.error && <div className="text-red-700">Last sync failed: {r.error}</div>}
-          {r && !r.error && <div className="text-slate-600">{r.added} added, {r.updated} updated, {r.unchanged} unchanged, {r.archived} removed</div>}
+          {r && !r.error && <div className="text-slate-400">{r.added} added, {r.updated} updated, {r.unchanged} unchanged, {r.archived} removed</div>}
           {!!r?.skipped?.length && (
             <details><summary className="cursor-pointer text-amber-800">{r.skipped.length} file(s) skipped</summary>
-              <ul className="mt-1 list-disc pl-5 text-slate-600">{r.skipped.map((k) => <li key={k.name + k.reason}><b>{k.name}</b>: {k.reason}</li>)}</ul>
+              <ul className="mt-1 list-disc pl-5 text-slate-400">{r.skipped.map((k) => <li key={k.name + k.reason}><b>{k.name}</b>: {k.reason}</li>)}</ul>
             </details>
           )}
         </div>
       ) : <div className="text-sm text-slate-500">No folder connected yet.</div>}
       <div className="flex gap-2 flex-wrap">
         <input value={folder} onChange={(e) => setFolder(e.target.value)} placeholder="Paste the folder's Drive link"
-          className="flex-1 min-w-[16rem] rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm" />
-        <button type="button" className="rounded-xl border border-slate-300 px-4 py-2 text-sm" disabled={!folder.trim() || !!busy} onClick={() => void save()}>
+          className="flex-1 min-w-[16rem] rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" />
+        <button type="button" className="rounded-xl border border-slate-600 px-4 py-2 text-sm" disabled={!folder.trim() || !!busy} onClick={() => void save()}>
           {s.source ? "Change folder" : "Connect folder"}
         </button>
       </div>
@@ -235,19 +235,19 @@ function AddResource({ scope, categories, reload }: { scope: "company" | "oms"; 
       <div className="flex gap-2">
         {(["file", "link"] as const).map((k) => (
           <button key={k} type="button" onClick={() => setKind(k)}
-            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${kind === k ? "btn-brand" : "border-slate-200 bg-white/70"}`}>{k === "file" ? "PDF or video" : "Link"}</button>
+            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${kind === k ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}>{k === "file" ? "PDF or video" : "Link"}</button>
         ))}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <label className="block text-sm">Title<input value={title} onChange={(e) => setTitle(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2" /></label>
+        <label className="block text-sm">Title<input value={title} onChange={(e) => setTitle(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2" /></label>
         <label className="block text-sm">Category
-          <input value={category} onChange={(e) => setCategory(e.target.value)} list="resource-categories" placeholder="General" className="mt-1 w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2" />
+          <input value={category} onChange={(e) => setCategory(e.target.value)} list="resource-categories" placeholder="General" className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2" />
           <datalist id="resource-categories">{categories.map((c) => <option key={c} value={c} />)}</datalist>
         </label>
-        <label className="block text-sm md:col-span-2">Description (optional)<input value={description} onChange={(e) => setDescription(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2" /></label>
+        <label className="block text-sm md:col-span-2">Description (optional)<input value={description} onChange={(e) => setDescription(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2" /></label>
         {kind === "file"
           ? <label className="block text-sm md:col-span-2">File (PDF, MP4, MOV or WebM, up to 300 MB)<input type="file" accept="application/pdf,video/mp4,video/quicktime,video/webm" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="mt-1 block text-sm" /></label>
-          : <label className="block text-sm md:col-span-2">Link<input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://" className="mt-1 w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2" /></label>}
+          : <label className="block text-sm md:col-span-2">Link<input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://" className="mt-1 w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2" /></label>}
       </div>
       <div className="flex items-center gap-3">
         <button type="button" className="btn-brand" disabled={!!busy || !title.trim()} onClick={() => void add()}>{busy || "Add"}</button>
@@ -265,14 +265,14 @@ function ItemRow({ r, reload }: { r: Resource; reload: () => void }) {
     try { await hubPatch(`/api/resources/${r.id}`, body); reload(); } catch (e) { setMsg((e as Error).message); }
   };
   return (
-    <tr className={`border-t border-slate-100 ${r.isActive ? "" : "opacity-60"}`}>
+    <tr className={`border-t border-slate-800 ${r.isActive ? "" : "opacity-60"}`}>
       <td className="p-3"><span className="inline-flex items-center gap-2"><ResourceIcon r={r} className="w-4 h-4 text-slate-500" />{r.title}</span>
         {!r.isActive && <span className="ml-2 text-xs text-slate-500">{r.kind === "doc" ? "(no longer in the folder)" : "(hidden)"}</span>}</td>
       <td className="p-3">{r.category}</td>
       <td className="p-3">
         <span className="inline-flex items-center gap-1 text-slate-500">/resources/
           <input value={slug} onChange={(e) => setSlug(e.target.value)} onBlur={() => slug !== r.slug && void patch({ slug })}
-            className="w-44 rounded-lg border border-slate-200 bg-white/70 px-2 py-1 text-slate-900" aria-label={`Address for ${r.title}`} />
+            className="w-44 rounded-lg border border-slate-700 bg-slate-900/70 px-2 py-1 text-slate-100" aria-label={`Address for ${r.title}`} />
         </span>
         {msg && <div className="text-xs text-red-700">{msg}</div>}
       </td>
@@ -323,7 +323,7 @@ export default function ResourcesPage() {
           <h1 className="text-3xl font-bold">Resources</h1>
           <p className="text-sm text-slate-500">Policies, processes and tutorials. Documents are kept in Google Drive; what you see here is always the latest version.</p>
         </div>
-        {tab === "manage" && <button type="button" className="rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={() => setTab("browse")}>Back to Resources</button>}
+        {tab === "manage" && <button type="button" className="rounded-xl border border-slate-600 px-4 py-2 text-sm" onClick={() => setTab("browse")}>Back to Resources</button>}
       </div>
       {tab === "browse" ? <Browse onManage={canManage ? () => setTab("manage") : null} /> : <Manage />}
     </div>

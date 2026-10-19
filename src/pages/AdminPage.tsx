@@ -16,7 +16,7 @@ type Options = {
   companies: { id: string; name: string; slug: string; email_domains: string[] }[]; canAddCompany: boolean;
 };
 
-const field = "w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm";
+const field = "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm";
 
 function PersonEditor({ person, opts, onDone, onCancel }: { person: Person | null; opts: Options; onDone: () => void; onCancel: () => void }) {
   const [f, setF] = useState({
@@ -90,7 +90,7 @@ function PersonEditor({ person, opts, onDone, onCancel }: { person: Person | nul
         <div className="text-sm font-semibold">Departments</div>
         <div className="flex flex-wrap gap-2">
           {activeDepts.map((d) => (
-            <label key={d.id} className={`rounded-xl border px-3 py-1 text-sm cursor-pointer ${depts.includes(d.id) ? "btn-brand" : "border-slate-200"}`}>
+            <label key={d.id} className={`rounded-xl border px-3 py-1 text-sm cursor-pointer ${depts.includes(d.id) ? "btn-brand" : "border-slate-700"}`}>
               <input type="checkbox" className="hidden" checked={depts.includes(d.id)}
                 onChange={(e) => setDepts(e.target.checked ? [...depts, d.id] : depts.filter((x) => x !== d.id))} />{d.name}
             </label>
@@ -100,14 +100,14 @@ function PersonEditor({ person, opts, onDone, onCancel }: { person: Person | nul
       {error && <div className="text-sm text-red-700">{error}</div>}
       <div className="flex gap-2 flex-wrap">
         <button type="button" className="btn-brand" onClick={() => void save()}>{person ? "Save changes" : "Add employee"}</button>
-        <button type="button" className="rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={onCancel}>Cancel</button>
+        <button type="button" className="rounded-xl border border-slate-600 px-4 py-2 text-sm" onClick={onCancel}>Cancel</button>
         {person && (person.is_active
           ? <button type="button" className="ml-auto rounded-xl border border-red-300 px-4 py-2 text-sm text-red-700" onClick={() => void setActive(false)}>Deactivate</button>
-          : <button type="button" className="ml-auto rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={() => void setActive(true)}>Reactivate</button>)}
+          : <button type="button" className="ml-auto rounded-xl border border-slate-600 px-4 py-2 text-sm" onClick={() => void setActive(true)}>Reactivate</button>)}
       </div>
 
       {person && (
-        <div className="space-y-3 border-t border-slate-200 pt-4">
+        <div className="space-y-3 border-t border-slate-700 pt-4">
           <div className="flex items-center justify-between"><div className="font-semibold">Roles</div><div className="text-xs text-slate-500">{msg}</div></div>
           {roles.length === 0 && <div className="text-sm text-slate-500">No roles. Every active employee is an Employee automatically.</div>}
           {roles.map((r) => (
@@ -151,8 +151,8 @@ function People({ opts }: { opts: Options }) {
   return (
     <div className="space-y-3">
       <div className="flex gap-2 flex-wrap">
-        <input className="rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm" placeholder="Search name, email, van #" value={search} onChange={(e) => setSearch(e.target.value)} />
-        <select className="rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm" value={status} onChange={(e) => setStatus(e.target.value)}>
+        <input className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" placeholder="Search name, email, van #" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <select className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="active">Active</option><option value="inactive">Inactive</option><option value="all">All</option>
         </select>
         <button type="button" className="btn-brand ml-auto" onClick={() => setEditing("new")}>+ Add employee</button>
@@ -161,11 +161,11 @@ function People({ opts }: { opts: Options }) {
         <table className="w-full text-sm">
           <tbody>
             {shown.map((p) => (
-              <tr key={p.id} className="border-t border-slate-100 first:border-t-0 cursor-pointer hover:bg-slate-50/60" onClick={() => setEditing(p)}>
-                <td className="p-3"><div className="font-semibold">{p.first_name} {p.last_name}{!p.is_active && <span className="ml-2 text-xs text-slate-400">inactive</span>}</div><div className="text-xs text-slate-500">{p.email}</div></td>
-                <td className="p-3 text-slate-600">{p.department_ids.map((d) => deptName.get(d)).filter(Boolean).join(", ") || "—"}</td>
+              <tr key={p.id} className="border-t border-slate-800 first:border-t-0 cursor-pointer hover:bg-slate-900/60" onClick={() => setEditing(p)}>
+                <td className="p-3"><div className="font-semibold">{p.first_name} {p.last_name}{!p.is_active && <span className="ml-2 text-xs text-slate-600">inactive</span>}</div><div className="text-xs text-slate-500">{p.email}</div></td>
+                <td className="p-3 text-slate-400">{p.department_ids.map((d) => deptName.get(d)).filter(Boolean).join(", ") || "—"}</td>
                 <td className="p-3 text-xs text-slate-500">{p.roles.map((r) => r.roleName).join(", ")}</td>
-                <td className="p-3 text-xs">{p.omst_linked ? "✓ OMST" : <span className="text-slate-400">not linked</span>}</td>
+                <td className="p-3 text-xs">{p.omst_linked ? "✓ OMST" : <span className="text-slate-600">not linked</span>}</td>
               </tr>
             ))}
           </tbody>
@@ -184,7 +184,7 @@ function OrgList({ kind, items, onChanged }: { kind: "departments" | "branches";
       <div className="font-semibold capitalize">{kind}</div>
       {items.map((d) => (
         <div key={d.id} className="flex items-center gap-2 text-sm">
-          <input className={`${field} ${d.is_active ? "" : "text-slate-400"}`} defaultValue={d.name}
+          <input className={`${field} ${d.is_active ? "" : "text-slate-600"}`} defaultValue={d.name}
             onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== d.name && void act(() => hubPatch(`/api/admin/${kind}/${d.id}`, { name: e.target.value }))} />
           <button type="button" className="btn-text whitespace-nowrap" onClick={() => void act(() => hubPatch(`/api/admin/${kind}/${d.id}`, { isActive: !d.is_active }))}>
             {d.is_active ? "Retire" : "Restore"}
@@ -208,7 +208,7 @@ function Activity() {
     <div className="glass-card rounded-2xl overflow-hidden">
       {rows.length === 0 && <div className="p-4 text-sm text-slate-500">No admin changes yet.</div>}
       {rows.map((r) => (
-        <div key={r.id} className="flex justify-between gap-3 border-t border-slate-100 px-4 py-3 text-sm first:border-t-0">
+        <div key={r.id} className="flex justify-between gap-3 border-t border-slate-800 px-4 py-3 text-sm first:border-t-0">
           <span><span className="font-semibold">{r.actor}</span> · {r.summary}</span>
           <span className="text-xs text-slate-500 whitespace-nowrap">{new Date(r.created_at).toLocaleString()}</span>
         </div>
@@ -232,7 +232,7 @@ function Companies({ opts, onChanged }: { opts: Options; onChanged: () => void }
     <div className="space-y-3">
       <div className="glass-card rounded-2xl overflow-hidden">
         {opts.companies.map((c) => (
-          <div key={c.id} className="flex justify-between border-t border-slate-100 px-4 py-3 text-sm first:border-t-0">
+          <div key={c.id} className="flex justify-between border-t border-slate-800 px-4 py-3 text-sm first:border-t-0">
             <span className="font-semibold">{c.name}</span><span className="text-slate-500">{c.slug} · {c.email_domains.join(", ") || "no domains"}</span>
           </div>
         ))}
@@ -266,7 +266,7 @@ export default function AdminPage() {
       <div className="flex gap-2 flex-wrap" role="tablist">
         {tabs.map(([k, n]) => (
           <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
-            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === k ? "btn-brand" : "border-slate-200 bg-white/70"}`}>{n}</button>
+            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === k ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}>{n}</button>
         ))}
       </div>
       {tab === "people" && <People opts={opts} />}

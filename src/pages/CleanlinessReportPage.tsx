@@ -25,7 +25,7 @@ const STATUS = { submitted: "✓ Submitted", pto: "PTO", missing: "Missing" } as
 
 function Photo({ id }: { id: string }) {
   const url = useUploadUrl(id);
-  return url ? <img src={url} alt="Audit photo" className="h-24 w-full rounded-lg object-cover" /> : <div className="h-24 rounded-lg bg-slate-200/60" />;
+  return url ? <img src={url} alt="Audit photo" className="h-24 w-full rounded-lg object-cover" /> : <div className="h-24 rounded-lg bg-slate-700/60" />;
 }
 
 export default function CleanlinessReportPage() {
@@ -74,13 +74,13 @@ export default function CleanlinessReportPage() {
         <div>
           <h1 className="text-3xl font-bold">Cleanliness Report</h1>
           <div className="flex items-center gap-2 text-sm mt-1">
-            <button type="button" className="rounded-xl border border-slate-200 px-3 py-1" onClick={() => void load(shift(week, -1))}>← Prev</button>
+            <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" onClick={() => void load(shift(week, -1))}>← Prev</button>
             <span className="font-semibold">Week of {fmt(week)}</span>
-            <button type="button" className="rounded-xl border border-slate-200 px-3 py-1" disabled={week >= data.currentWeek}
+            <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" disabled={week >= data.currentWeek}
               onClick={() => void load(shift(week, 1))}>Next →</button>
           </div>
         </div>
-        <Link to="/cleanliness" className="rounded-xl border border-slate-300 px-4 py-2 text-sm">My audit</Link>
+        <Link to="/cleanliness" className="rounded-xl border border-slate-600 px-4 py-2 text-sm">My audit</Link>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -101,11 +101,11 @@ export default function CleanlinessReportPage() {
       <div className="flex gap-2 flex-wrap">
         {(["all", "missing", "submitted", "pto"] as const).map((f) => (
           <button key={f} type="button" aria-pressed={filter === f} onClick={() => setFilter(f)}
-            className={`rounded-xl border px-3 py-1 text-sm ${filter === f ? "btn-brand" : "border-slate-200 bg-white/70"}`}>
+            className={`rounded-xl border px-3 py-1 text-sm ${filter === f ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}>
             {f === "all" ? "Everyone" : STATUS[f]}
           </button>
         ))}
-        <select className="rounded-xl border border-slate-200 bg-white/70 px-3 py-1 text-sm" value={branch} onChange={(e) => setBranch(e.target.value)}>
+        <select className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-1 text-sm" value={branch} onChange={(e) => setBranch(e.target.value)}>
           <option value="">All branches</option>
           {branches.map((b) => <option key={b} value={b}>{b}</option>)}
         </select>
@@ -119,7 +119,7 @@ export default function CleanlinessReportPage() {
           <tbody>
             {shown.map((p) => (
               <Fragment key={p.id}>
-                <tr className="border-t border-slate-100">
+                <tr className="border-t border-slate-800">
                   <td className="p-3"><div className="font-semibold">{p.name}</div><div className="text-xs text-slate-500">{p.departments || "—"}</div></td>
                   <td className="p-3">{p.branch ?? "—"}</td>
                   <td className="p-3">
@@ -143,9 +143,9 @@ export default function CleanlinessReportPage() {
                   </td>
                 </tr>
                 {open === p.id && p.answers && (
-                  <tr className="border-t border-slate-100">
+                  <tr className="border-t border-slate-800">
                     <td colSpan={5} className="p-4 space-y-3">
-                      <div className="text-sm text-slate-600">
+                      <div className="text-sm text-slate-400">
                         {p.vehicle_score !== null && <>Vehicle {p.vehicle_score}% · </>}
                         {p.office_score !== null && <>Office {p.office_score}% · </>}
                         {p.edit_count ? `edited ${p.edit_count}×` : "not edited"}

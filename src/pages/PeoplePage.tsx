@@ -65,28 +65,28 @@ export default function PeoplePage() {
       <div className="flex items-end justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-3xl font-bold">People</h1>
-          <p className="text-sm text-slate-600">{loading ? "Loading…" : `${shown.length} shown`}</p>
+          <p className="text-sm text-slate-400">{loading ? "Loading…" : `${shown.length} shown`}</p>
         </div>
         <div className="flex gap-2 flex-wrap">
           <input
-            className="rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm"
+            className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm"
             placeholder="Search name, email, van #"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <select className="rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm" value={filters.company} onChange={set("company")}>
+          <select className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" value={filters.company} onChange={set("company")}>
             <option value="">All companies</option>
             {org?.companies.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
-          <select className="rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm" value={filters.department} onChange={set("department")}>
+          <select className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" value={filters.department} onChange={set("department")}>
             <option value="">All departments</option>
             {inCompany(org?.departments).map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
           </select>
-          <select className="rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm" value={filters.branch} onChange={set("branch")}>
+          <select className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" value={filters.branch} onChange={set("branch")}>
             <option value="">All branches</option>
             {inCompany(org?.branches).map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
           </select>
-          <select className="rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm" value={filters.status} onChange={set("status")}>
+          <select className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" value={filters.status} onChange={set("status")}>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
             <option value="all">All</option>
@@ -110,11 +110,11 @@ export default function PeoplePage() {
           </thead>
           <tbody>
             {shown.map((p) => (
-              <tr key={p.id} className="border-t border-slate-100">
+              <tr key={p.id} className="border-t border-slate-800">
                 <td className="p-3">
                   <div className="font-semibold">
                     {p.first_name} {p.last_name}
-                    {!p.is_active && <span className="ml-2 text-xs text-slate-400">inactive</span>}
+                    {!p.is_active && <span className="ml-2 text-xs text-slate-600">inactive</span>}
                   </div>
                   <div className="text-xs text-slate-500">{p.email}</div>
                 </td>

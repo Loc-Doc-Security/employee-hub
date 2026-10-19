@@ -13,12 +13,12 @@ type Spotlight = {
 };
 type Mine = { today: string; meeting: { id: string; date: string; topic: string } | null; spotlight: Spotlight | null; past: Spotlight[]; canFileForAnyone: boolean };
 
-const field = "w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm";
+const field = "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm";
 const fmt = (d: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
 
 function Img({ id, alt, className }: { id: string; alt: string; className: string }) {
   const url = useUploadUrl(id);
-  return url ? <img src={url} alt={alt} className={className} /> : <div className={`${className} bg-slate-200/60`} />;
+  return url ? <img src={url} alt={alt} className={className} /> : <div className={`${className} bg-slate-700/60`} />;
 }
 
 function SpotlightView({ s }: { s: Spotlight }) {
@@ -29,8 +29,8 @@ function SpotlightView({ s }: { s: Spotlight }) {
         <div className="text-sm text-slate-500">{s.presenter} · {fmt(s.presented_on)}</div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-        <div className="rounded-xl border border-slate-200 p-3"><div className="text-xs text-slate-500">Problem</div><div className="whitespace-pre-wrap">{s.problem}</div></div>
-        <div className="rounded-xl border border-slate-200 p-3"><div className="text-xs text-slate-500">Solution</div><div className="whitespace-pre-wrap">{s.solution}</div></div>
+        <div className="rounded-xl border border-slate-700 p-3"><div className="text-xs text-slate-500">Problem</div><div className="whitespace-pre-wrap">{s.problem}</div></div>
+        <div className="rounded-xl border border-slate-700 p-3"><div className="text-xs text-slate-500">Solution</div><div className="whitespace-pre-wrap">{s.solution}</div></div>
       </div>
       {s.photos.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -102,7 +102,7 @@ function SpotlightForm({ initial, onBehalf, deadline }: { initial: Spotlight | n
   return (
     <div className="glass-card rounded-2xl p-6 space-y-4">
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div className="text-sm text-slate-600">
+        <div className="text-sm text-slate-400">
           {status === "submitted" ? "✓ Submitted" : "Draft (not shown at the meeting until you submit)"} · editable through {fmt(deadline)}
         </div>
         <div className={`text-xs ${error ? "text-red-700" : "text-slate-500"}`}>{error || note}</div>
@@ -117,7 +117,7 @@ function SpotlightForm({ initial, onBehalf, deadline }: { initial: Spotlight | n
         <div className="text-sm font-semibold">Photos <span className="font-normal text-slate-500">(shown in this order)</span></div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {photos.map((p, i) => (
-            <div key={p.uploadId} className="rounded-xl border border-slate-200 p-2 space-y-2">
+            <div key={p.uploadId} className="rounded-xl border border-slate-700 p-2 space-y-2">
               <Img id={p.uploadId} alt={p.caption || `Photo ${i + 1}`} className="h-36 w-full rounded-lg object-cover" />
               <input className={field} placeholder="Caption" value={p.caption}
                 onChange={(e) => setPhotos((all) => all.map((x, j) => (j === i ? { ...x, caption: e.target.value } : x)))} />
@@ -129,7 +129,7 @@ function SpotlightForm({ initial, onBehalf, deadline }: { initial: Spotlight | n
             </div>
           ))}
         </div>
-        <label className="inline-block cursor-pointer rounded-xl border border-dashed border-slate-300 px-4 py-2 text-sm">
+        <label className="inline-block cursor-pointer rounded-xl border border-dashed border-slate-600 px-4 py-2 text-sm">
           {uploading ? `Uploading ${uploading}…` : "+ Add photos"}
           <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => { if (e.target.files) void addPhotos(e.target.files); e.target.value = ""; }} />
         </label>
@@ -150,7 +150,7 @@ function MyTab({ mine }: { mine: Mine }) {
     <div className="space-y-4">
       {mine.meeting ? (
         <>
-          <p className="text-sm text-slate-600">You're presenting on <span className="font-semibold">{fmt(mine.meeting.date)}</span>{mine.meeting.topic ? ` (${mine.meeting.topic})` : ""}.</p>
+          <p className="text-sm text-slate-400">You're presenting on <span className="font-semibold">{fmt(mine.meeting.date)}</span>{mine.meeting.topic ? ` (${mine.meeting.topic})` : ""}.</p>
           <SpotlightForm initial={mine.spotlight} deadline={mine.meeting.date} />
         </>
       ) : (
@@ -181,7 +181,7 @@ function Showcase() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {shown.map((x) => (
           <button key={x.id} type="button" onClick={() => setOpen(x)} className="glass-card rounded-2xl p-4 text-left space-y-2 hover:shadow-md">
-            {x.photos[0] ? <Img id={x.photos[0].uploadId} alt={x.title} className="h-36 w-full rounded-xl object-cover" /> : <div className="h-36 rounded-xl bg-slate-100/70 flex items-center justify-center text-xs text-slate-400">No photos</div>}
+            {x.photos[0] ? <Img id={x.photos[0].uploadId} alt={x.title} className="h-36 w-full rounded-xl object-cover" /> : <div className="h-36 rounded-xl bg-slate-800/70 flex items-center justify-center text-xs text-slate-600">No photos</div>}
             <div className="font-semibold">{x.title || "Untitled"}</div>
             <div className="text-xs text-slate-500">{x.presenter} · {fmt(x.presented_on)}</div>
           </button>
@@ -205,13 +205,13 @@ function FileForSomeone() {
     .then((d) => setLoaded({ key: `${employeeId}|${date}`, spotlight: d.spotlight })).catch((e: Error) => setError(e.message));
   return (
     <div className="space-y-4">
-      <p className="text-sm text-slate-600">Super admin: file or fix a spotlight for any tech, on any date, even after the meeting.</p>
+      <p className="text-sm text-slate-400">Super admin: file or fix a spotlight for any tech, on any date, even after the meeting.</p>
       <div className="flex gap-2 flex-wrap">
-        <select className="rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm" value={employeeId} onChange={(e) => { setEmployeeId(e.target.value); setLoaded(null); }}>
+        <select className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm" value={employeeId} onChange={(e) => { setEmployeeId(e.target.value); setLoaded(null); }}>
           <option value="">Pick a tech</option>
           {people.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
         </select>
-        <input type="date" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" value={date} onChange={(e) => { setDate(e.target.value); setLoaded(null); }} />
+        <input type="date" className="rounded-xl border border-slate-700 px-3 py-2 text-sm" value={date} onChange={(e) => { setDate(e.target.value); setLoaded(null); }} />
         <button type="button" className="btn-brand" disabled={!employeeId || !date} onClick={() => void open()}>Open</button>
       </div>
       {error && <div className="text-sm text-red-700">{error}</div>}
@@ -232,7 +232,7 @@ export default function TechSpotlightPage() {
       <div className="flex gap-2 flex-wrap" role="tablist">
         {tabs.map(([k, n]) => (
           <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
-            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === k ? "btn-brand" : "border-slate-200 bg-white/70"}`}>{n}</button>
+            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === k ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}>{n}</button>
         ))}
       </div>
       {error && <div className="text-sm text-red-700">{error}</div>}

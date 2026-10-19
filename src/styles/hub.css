@@ -1,0 +1,159 @@
+/*
+ * Employee Hub look, layered UNDER the OMST theme (lab-theme), never instead of it.
+ * See docs/HUB_DESIGN.md. Rules:
+ *   - Only theme variables (--theme-*, --text-*), so light, dark and every OMST palette keep working.
+ *   - The theme files in vendor/lab-theme are never edited.
+ *   - Brings back the Teamwix hub feel: solid cards, OMS-size corners, big icon chips in the
+ *     secondary (green) brand color, quiet uppercase section labels, tiles that lift on hover.
+ * Everything is scoped to .hub-shell (the signed-in app), so the login page is untouched.
+ *
+ * Cascade: the hub's own classes live in @layer components, so Tailwind utilities on an element
+ * (md:hidden, p-4, …) still win. Only the deliberate overrides of OMST defaults (solid cards,
+ * corner size) sit outside the layers, because they must beat the theme.
+ */
+
+/* This file can load before Tailwind's, so state the standard layer order here too; otherwise
+   "components" would be registered first and rank below Tailwind's reset. */
+@layer theme, base, components, utilities;
+
+.hub-shell {
+  --hub-radius: 8px;
+  --hub-radius-lg: 10px;
+  --hub-border: color-mix(in srgb, var(--text-primary, #12151c) 10%, transparent);
+  --hub-border-strong: color-mix(in srgb, var(--text-primary, #12151c) 18%, transparent);
+  --hub-shadow: 0 1px 3px rgba(18, 21, 28, 0.08), 0 1px 2px rgba(18, 21, 28, 0.04);
+  --hub-shadow-hover: 0 6px 14px -4px rgba(18, 21, 28, 0.16);
+  --hub-chip-bg: color-mix(in srgb, var(--theme-brand-secondary-600) 14%, var(--theme-surface));
+  --hub-chip-fg: var(--theme-brand-secondary-600);
+  --hub-rail: 72px;
+}
+[data-theme^="dark"] .hub-shell {
+  --hub-shadow: none;
+  --hub-shadow-hover: 0 6px 16px -6px rgba(0, 0, 0, 0.6);
+  --hub-chip-bg: color-mix(in srgb, var(--theme-brand-secondary-600) 26%, var(--theme-surface));
+  --hub-chip-fg: var(--theme-brand-secondary-300);
+}
+
+/* Solid cards instead of OMST's frosted glass (Levi, 2026-10-19), with OMS-size corners. */
+.hub-shell .glass-card,
+.hub-card {
+  background: var(--theme-surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid var(--hub-border);
+  box-shadow: var(--hub-shadow);
+}
+.hub-shell .rounded-2xl { border-radius: var(--hub-radius-lg); }
+.hub-shell .rounded-xl { border-radius: var(--hub-radius); }
+.hub-card { border-radius: var(--hub-radius-lg); }
+
+/* OMST's brand buttons use Tailwind's text-white, which the theme maps to dark text in light mode,
+   so labels came out dark on blue. Keep them white (worth fixing in lab-theme itself). */
+.hub-shell :is(.btn-brand, .btn-brand-secondary),
+.hub-shell :is(.btn-brand, .btn-brand-secondary):hover { color: #fff; }
+
+/* The company logo (outside the layer so image defaults can't stretch it). */
+.hub-brand-logo { height: 2rem; width: auto; max-width: 9.5rem; object-fit: contain; }
+
+@layer components {
+/* Section label: small, uppercase, quiet, with a rule (Teamwix hub). */
+.hub-section-title {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--theme-slate-500);
+  padding-bottom: 0.6rem; margin-bottom: 0.9rem;
+  border-bottom: 1px solid var(--hub-border);
+}
+
+/* Icon chip: the brand-tinted square behind an icon. */
+.hub-icon-chip {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 3rem; height: 3rem; border-radius: var(--hub-radius);
+  background: var(--hub-chip-bg); color: var(--hub-chip-fg);
+}
+.hub-icon-chip svg { width: 1.6rem; height: 1.6rem; stroke-width: 1.75; }
+.hub-icon-chip--sm { width: 2.25rem; height: 2.25rem; }
+.hub-icon-chip--sm svg { width: 1.2rem; height: 1.2rem; }
+.hub-icon-chip--lg { width: 3.5rem; height: 3.5rem; }
+.hub-icon-chip--lg svg { width: 1.9rem; height: 1.9rem; }
+
+/* Tool tiles (Home): icon-forward, lift + ring on hover. */
+.hub-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 0.85rem; }
+.hub-tile {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.7rem;
+  padding: 1.3rem 0.75rem 1.1rem; text-align: center; text-decoration: none;
+  background: var(--theme-surface); border: 1.5px solid var(--hub-border); border-radius: var(--hub-radius-lg);
+  box-shadow: var(--hub-shadow); color: var(--text-primary);
+  transition: border-color .15s, box-shadow .15s, transform .12s;
+}
+.hub-tile:hover {
+  border-color: var(--theme-accent-600);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--theme-accent-600) 12%, transparent), var(--hub-shadow-hover);
+  transform: translateY(-2px);
+}
+.hub-tile:active { transform: scale(.98); }
+.hub-tile:focus-visible { outline: 2px solid var(--theme-accent-600); outline-offset: 2px; }
+.hub-tile__name { font-size: 0.82rem; font-weight: 700; line-height: 1.25; }
+@media (max-width: 600px) {
+  .hub-tiles { grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr)); gap: 0.6rem; }
+  .hub-tile { padding: 1rem 0.5rem 0.85rem; }
+}
+
+/* Page header: icon chip + title + one line. */
+.hub-page-header { display: flex; align-items: center; gap: 0.9rem; min-width: 0; }
+.hub-page-header h1 { font-size: 1.6rem; font-weight: 700; line-height: 1.2; color: var(--text-primary); }
+.hub-page-header p { font-size: 0.875rem; color: var(--theme-slate-500); margin-top: 0.15rem; }
+
+/* ---- App shell: collapsible sidebar, icon rail, phone drawer ---- */
+.hub-rail {
+  width: var(--hub-rail); height: 100vh;
+  display: flex; flex-direction: column; align-items: center; gap: 0.25rem; padding: 0.75rem 0;
+}
+.hub-rail__items { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; align-items: center; gap: 0.2rem; width: 100%; }
+.hub-rail__sep { width: 2rem; height: 1px; background: var(--hub-border-strong); margin: 0.35rem 0; flex-shrink: 0; }
+.hub-rail__link {
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 2.75rem; height: 2.75rem; border-radius: var(--hub-radius);
+  color: var(--text-nav-muted, #333); transition: background .12s, color .12s;
+}
+.hub-rail__link svg { width: 1.3rem; height: 1.3rem; color: var(--theme-accent-600); }
+.hub-rail__link:hover { background: color-mix(in srgb, var(--theme-accent-600) 10%, transparent); }
+.hub-rail__link--active { background: color-mix(in srgb, var(--theme-accent-600) 16%, transparent); }
+.hub-rail__link--active svg { color: var(--theme-accent-600); }
+.hub-nav-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.25rem; height: 2.25rem; border-radius: var(--hub-radius);
+  color: var(--text-nav-muted, #333); transition: background .12s;
+}
+.hub-nav-toggle:hover { background: color-mix(in srgb, var(--theme-accent-600) 10%, transparent); }
+.hub-nav-toggle svg { width: 1.2rem; height: 1.2rem; }
+
+.hub-topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 3.25rem; z-index: 30; display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 0.75rem; background: var(--theme-surface); border-bottom: 1px solid var(--hub-border);
+}
+.hub-drawer-backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(15, 17, 23, 0.35); animation: hub-fade .15s ease-out; }
+.hub-drawer { position: fixed; inset: 0 auto 0 0; z-index: 50; width: min(16rem, 85vw); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); animation: hub-slide .18s ease-out; }
+.hub-drawer .hub-navpanel { width: 100%; }
+.hub-drawer--right { inset: 0 0 0 auto; }
+@keyframes hub-fade { from { opacity: 0; } }
+@keyframes hub-slide { from { transform: translateX(-1.5rem); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .hub-drawer, .hub-drawer-backdrop { animation: none; } }
+.hub-today { display: inline-flex; align-items: center; justify-content: center; width: 1.4rem; height: 1.4rem; border-radius: 999px;
+  background: var(--theme-accent-600); color: #fff; }
+}
+
+/* (Outside the layer: must beat the theme sidebar and its h-full utility.)
+   The full menu panel (floating, pinned or phone drawer): full height, scrolls as ONE piece, so the
+   menu never sits in a short box between the header and the footer. Rows a little tighter than
+   OMST's 44px so all groups fit a laptop screen. */
+.hub-navpanel { height: 100vh; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; }
+.hub-navpanel .lab-sidebar__groups { flex: 1 0 auto; overflow: visible; }
+.hub-navpanel .lab-nav-link { min-height: 2.35rem; padding-top: 0.35rem; padding-bottom: 0.35rem; }
+.hub-navpanel .lab-sidebar__section-toggle { padding-top: 0.55rem; padding-bottom: 0.55rem; }
+/* Desktop nav is fixed to the window; the spacer keeps its width in the page layout. */
+.hub-nav-spacer { width: var(--hub-rail); }
+.hub-nav-spacer--wide { width: 16rem; }
+.hub-fixed-left, .hub-fixed-right { position: fixed; top: 0; bottom: 0; z-index: 30; }
+.hub-fixed-left { left: 0; }
+.hub-fixed-right { right: 0; }

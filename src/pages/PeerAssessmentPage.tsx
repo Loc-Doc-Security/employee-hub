@@ -28,7 +28,7 @@ type FullRow = Record<CKey, number> & {
   criterion_feedback: Record<string, string>; general_feedback: string;
 };
 
-const field = "w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm";
+const field = "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm";
 const fmtMonth = (m: string) =>
   new Date(`${m.slice(0, 7)}-01T12:00:00Z`).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
 const fmtMonthShort = (m: string) =>
@@ -47,9 +47,9 @@ const overall = (a: Partial<Record<CKey, number | null>>) => {
 function MonthPicker({ month, setMonth }: { month: string; setMonth: (m: string) => void }) {
   return (
     <div className="flex items-center gap-2 text-sm">
-      <button type="button" className="rounded-xl border border-slate-200 px-3 py-1" onClick={() => setMonth(shiftMonth(month, -1))}>← Prev</button>
+      <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" onClick={() => setMonth(shiftMonth(month, -1))}>← Prev</button>
       <span className="font-semibold">{fmtMonth(month)}</span>
-      <button type="button" className="rounded-xl border border-slate-200 px-3 py-1" onClick={() => setMonth(shiftMonth(month, 1))}>Next →</button>
+      <button type="button" className="rounded-xl border border-slate-700 px-3 py-1" onClick={() => setMonth(shiftMonth(month, 1))}>Next →</button>
     </div>
   );
 }
@@ -62,7 +62,7 @@ function ScoreBars({ a }: { a: Partial<Record<CKey, number | null>> }) {
         return (
           <div key={c.key} className="grid grid-cols-[9rem_1fr_3rem] items-center gap-3 text-sm">
             <span>{c.label}</span>
-            <div className="h-2 rounded-full bg-slate-200/70 overflow-hidden">
+            <div className="h-2 rounded-full bg-slate-700/70 overflow-hidden">
               {typeof v === "number" && <div className="h-full rounded-full" style={{ width: `${(v / 4) * 100}%`, background: "var(--theme-accent-600, #2563eb)" }} />}
             </div>
             <span className="text-right font-semibold">{typeof v === "number" ? v.toFixed(2) : "—"}</span>
@@ -115,7 +115,7 @@ function AssessForm({ person, onDone, onCancel }: { person: Assignment; onDone: 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2" role="group" aria-label={c.label}>
             {[1, 2, 3, 4].map((v) => (
               <button key={v} type="button" aria-pressed={scores[c.key] === v}
-                className={`rounded-xl border px-2 py-2 text-xs font-semibold ${scores[c.key] === v ? "btn-brand" : "border-slate-200 bg-white/70"}`}
+                className={`rounded-xl border px-2 py-2 text-xs font-semibold ${scores[c.key] === v ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}
                 onClick={() => setScores((s) => ({ ...s, [c.key]: v }))}>{v} · {SCORE_LABELS[v - 1]}</button>
             ))}
           </div>
@@ -133,14 +133,14 @@ function AssessForm({ person, onDone, onCancel }: { person: Assignment; onDone: 
           <button type="button" className="btn-brand" disabled={missing.length > 0} onClick={() => setConfirming(true)}>
             {missing.length ? `Finish ${missing.length} more to submit` : "Submit assessment"}
           </button>
-          <button type="button" className="rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={onCancel}>Back to list</button>
+          <button type="button" className="rounded-xl border border-slate-600 px-4 py-2 text-sm" onClick={onCancel}>Back to list</button>
         </div>
       ) : (
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 space-y-3 text-sm text-slate-800">
+        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 space-y-3 text-sm text-slate-200">
           <div>Assessments can't be changed after submitting. Submit now?</div>
           <div className="flex gap-2">
             <button type="button" className="btn-brand" disabled={saving} onClick={submit}>{saving ? "Submitting…" : "Yes, submit"}</button>
-            <button type="button" className="rounded-xl border border-slate-300 px-4 py-2" onClick={() => setConfirming(false)}>Keep editing</button>
+            <button type="button" className="rounded-xl border border-slate-600 px-4 py-2" onClick={() => setConfirming(false)}>Keep editing</button>
           </div>
         </div>
       )}
@@ -172,7 +172,7 @@ function AssessTab() {
   const onList = new Set(data.people.map((p) => p.id));
   const done = data.people.filter((p) => doneIds.has(p.id)).length;
   const row = (p: { id: string; name: string; departments: string }, reason: Assignment["reason"]) => (
-    <div key={p.id} className="flex items-center justify-between gap-3 px-4 py-3 border-t border-slate-100 first:border-t-0">
+    <div key={p.id} className="flex items-center justify-between gap-3 px-4 py-3 border-t border-slate-800 first:border-t-0">
       <div>
         <div className="font-semibold">{p.name}</div>
         <div className="text-xs text-slate-500">{p.departments || "—"}</div>
@@ -202,7 +202,7 @@ function AssessTab() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-slate-600"><span className="font-semibold">My Team · {fmtMonth(data.month)}:</span> {done} of {data.people.length} done. This list is set for the month.</p>
+      <p className="text-sm text-slate-400"><span className="font-semibold">My Team · {fmtMonth(data.month)}:</span> {done} of {data.people.length} done. This list is set for the month.</p>
       {group("department", "Your department")}
       {group("random", "Picked at random this month")}
       <div className="glass-card rounded-2xl overflow-hidden">
@@ -234,14 +234,14 @@ function ResultsTab() {
       {data && (
         <>
           <div className="glass-card rounded-2xl p-6 space-y-4">
-            <div className="text-sm text-slate-600">
+            <div className="text-sm text-slate-400">
               {data.averages.count ? `${data.averages.count} teammate${data.averages.count === 1 ? "" : "s"} assessed you. Names are never shown.` : "No assessments received this month."}
             </div>
             {data.averages.count > 0 && <ScoreBars a={data.averages} />}
             {data.feedback.length > 0 && (
               <div className="space-y-2 pt-2">
                 <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Feedback received</div>
-                {data.feedback.map((f, i) => <div key={i} className="rounded-xl bg-slate-100/70 px-3 py-2 text-sm">{f}</div>)}
+                {data.feedback.map((f, i) => <div key={i} className="rounded-xl bg-slate-800/70 px-3 py-2 text-sm">{f}</div>)}
               </div>
             )}
           </div>
@@ -277,7 +277,7 @@ function TeamTab() {
               {rows.map((r) => {
                 const o = overall(r);
                 return (
-                  <tr key={r.id} className="border-t border-slate-100">
+                  <tr key={r.id} className="border-t border-slate-800">
                     <td className="p-3">{r.name}</td>
                     <td className="p-3">{r.count}</td>
                     {CRITERIA.map((c) => <td key={c.key} className="p-3">{r[c.key]?.toFixed(2) ?? "—"}</td>)}
@@ -334,7 +334,7 @@ export default function PeerAssessmentPage() {
       <div className="flex gap-2 flex-wrap" role="tablist">
         {tabs.map(([key, name]) => (
           <button key={key} type="button" role="tab" aria-selected={tab === key}
-            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === key ? "btn-brand" : "border-slate-200 bg-white/70"}`}
+            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === key ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}
             onClick={() => setTab(key)}>{name}</button>
         ))}
       </div>

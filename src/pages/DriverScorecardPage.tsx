@@ -46,14 +46,14 @@ export function DriverTable({ data }: { data: WeekData }) {
           </thead>
           <tbody>
             {ranked.map((r, i) => (
-              <tr key={r.id} className="border-t border-slate-100">
+              <tr key={r.id} className="border-t border-slate-800">
                 <td className="p-3 text-slate-500">{i + 1}</td>
                 <td className="p-3"><div className="font-semibold">{r.name || "—"}</div><div className="text-xs text-slate-500">Van {r.vehicle_label} · {r.classification}</div></td>
                 <td className="p-3 font-semibold">{r.score}</td>
                 {RULES.map(([k]) => <td key={k} className="p-3">{r[k]}</td>)}
               </tr>
             ))}
-            <tr className="border-t-2 border-slate-200 text-slate-600">
+            <tr className="border-t-2 border-slate-700 text-slate-400">
               <td className="p-3" /><td className="p-3 font-semibold">Fleet average</td>
               <td className="p-3 font-semibold">{data.fleet_score?.toFixed(1) ?? "—"}</td>
               {RULES.map(([k]) => <td key={k} className="p-3">{data.ruleAverages[k] ?? "—"}</td>)}
@@ -115,13 +115,13 @@ export default function DriverScorecardPage() {
       <div className="glass-card rounded-2xl p-6 space-y-3">
         <div className="font-semibold">Upload this week's Geotab scorecard</div>
         <div className="text-sm text-slate-500">The "Driver Safety Scorecard (Expanded)" PDF. Uploading a week that's already here replaces it.</div>
-        <label className={`inline-block rounded-xl px-4 py-2 text-sm ${uploading ? "border border-slate-200 text-slate-400" : "btn-brand cursor-pointer"}`}>
+        <label className={`inline-block rounded-xl px-4 py-2 text-sm ${uploading ? "border border-slate-700 text-slate-600" : "btn-brand cursor-pointer"}`}>
           {uploading ? "Reading the PDF…" : "Choose PDF"}
           <input type="file" accept="application/pdf" className="hidden" disabled={uploading}
             onChange={(e) => { const f = e.target.files?.[0]; if (f) void upload(f); e.target.value = ""; }} />
         </label>
         {result && (
-          <div className="rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-sm text-slate-800">
+          <div className="rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-sm text-slate-200">
             ✓ {result.weekLabel}: {result.drivers} drivers, fleet score {result.fleetScore?.toFixed(1) ?? "—"}. Ranked {result.counts.ranked}
             {Object.entries(result.counts).filter(([k, v]) => k !== "ranked" && v > 0).map(([k, v]) => `, ${PARKED[k]} ${v}`).join("")}.
           </div>
@@ -132,7 +132,7 @@ export default function DriverScorecardPage() {
       {weeks && weeks.length > 0 && (
         <div className="flex items-center gap-2 text-sm">
           <span className="text-slate-500">Week</span>
-          <select className="rounded-xl border border-slate-200 bg-white/70 px-3 py-2" value={week} onChange={(e) => setWeek(e.target.value)}>
+          <select className="rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2" value={week} onChange={(e) => setWeek(e.target.value)}>
             {weeks.map((w) => <option key={w.week_start} value={w.week_start}>{w.week_label}{w.uploaded_by ? ` · ${w.uploaded_by}` : ""}</option>)}
           </select>
         </div>

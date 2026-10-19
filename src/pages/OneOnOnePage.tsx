@@ -29,7 +29,7 @@ const CONVERSATION = [
   { key: "needs", label: "What do you need from us? (tools / communication)" },
   { key: "howCanIHelp", label: "What can I do to help?" },
 ] as const;
-const field = "w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm";
+const field = "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm";
 const fmt = (d: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
 const today = () => {
   const d = new Date();
@@ -69,7 +69,7 @@ function ReviewNumbers({ r }: { r: Review }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {tiles.map(([label, value]) => (
-        <div key={label} className="rounded-xl border border-slate-200 p-3">
+        <div key={label} className="rounded-xl border border-slate-700 p-3">
           <div className="text-xs text-slate-500">{label} this month</div>
           <div className="font-semibold">{value}</div>
         </div>
@@ -109,12 +109,12 @@ function Walkthrough({ person, review, onSaved, onCancel }: { person: RosterRow;
     <div className="glass-card rounded-2xl p-6 space-y-5">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <h2 className="text-lg font-semibold">1:1 with {person.name}</h2>
-        <label className="text-sm">Meeting date <input type="date" className="ml-2 rounded-xl border border-slate-200 px-2 py-1" max={today()} value={metOn} onChange={(e) => setMetOn(e.target.value)} /></label>
+        <label className="text-sm">Meeting date <input type="date" className="ml-2 rounded-xl border border-slate-700 px-2 py-1" max={today()} value={metOn} onChange={(e) => setMetOn(e.target.value)} /></label>
       </div>
       <div className="flex gap-2 text-sm">
         {["Review", "Conversation", "Follow-ups"].map((s, i) => (
           <button key={s} type="button" aria-pressed={step === i + 1} onClick={() => setStep(i + 1)}
-            className={`rounded-xl border px-3 py-1 ${step === i + 1 ? "btn-brand" : "border-slate-200 bg-white/70"}`}>{i + 1}. {s}</button>
+            className={`rounded-xl border px-3 py-1 ${step === i + 1 ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}>{i + 1}. {s}</button>
         ))}
       </div>
 
@@ -124,7 +124,7 @@ function Walkthrough({ person, review, onSaved, onCancel }: { person: RosterRow;
           <div className="space-y-2">
             <div className="text-sm font-semibold">Site visits reviewed</div>
             {visits.map((v, i) => (
-              <div key={i} className="flex items-start justify-between gap-2 rounded-xl border border-slate-200 p-2 text-sm">
+              <div key={i} className="flex items-start justify-between gap-2 rounded-xl border border-slate-700 p-2 text-sm">
                 <div><span className="font-semibold">{v.label}</span>{v.notes ? `: ${v.notes}` : ""}</div>
                 <button type="button" className="btn-text" onClick={() => setVisits(visits.filter((_, j) => j !== i))}>Remove</button>
               </div>
@@ -132,7 +132,7 @@ function Walkthrough({ person, review, onSaved, onCancel }: { person: RosterRow;
             <div className="grid grid-cols-1 sm:grid-cols-[10rem_1fr_auto] gap-2">
               <input className={field} placeholder="Job / ticket #" value={visit.label} onChange={(e) => setVisit({ ...visit, label: e.target.value })} />
               <input className={field} placeholder="What you found" value={visit.notes} onChange={(e) => setVisit({ ...visit, notes: e.target.value })} />
-              <button type="button" className="rounded-xl border border-slate-300 px-3 text-sm" disabled={!visit.label.trim() && !visit.notes.trim()}
+              <button type="button" className="rounded-xl border border-slate-600 px-3 text-sm" disabled={!visit.label.trim() && !visit.notes.trim()}
                 onClick={() => { setVisits([...visits, visit]); setVisit({ label: "", notes: "" }); }}>Add</button>
             </div>
           </div>
@@ -158,14 +158,14 @@ function Walkthrough({ person, review, onSaved, onCancel }: { person: RosterRow;
           {!confirming ? (
             <div className="flex gap-2">
               <button type="button" className="btn-brand" disabled={!hasNotes} onClick={() => setConfirming(true)}>{hasNotes ? "Save 1:1" : "Add some notes to save"}</button>
-              <button type="button" className="rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={onCancel}>Cancel</button>
+              <button type="button" className="rounded-xl border border-slate-600 px-4 py-2 text-sm" onClick={onCancel}>Cancel</button>
             </div>
           ) : (
-            <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 space-y-3 text-sm text-slate-800">
+            <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 space-y-3 text-sm text-slate-200">
               <div>{person.name} will be able to read this 1:1. It can't be changed after saving. Save now?</div>
               <div className="flex gap-2">
                 <button type="button" className="btn-brand" disabled={saving} onClick={save}>{saving ? "Saving…" : "Yes, save"}</button>
-                <button type="button" className="rounded-xl border border-slate-300 px-4 py-2" onClick={() => setConfirming(false)}>Keep editing</button>
+                <button type="button" className="rounded-xl border border-slate-600 px-4 py-2" onClick={() => setConfirming(false)}>Keep editing</button>
               </div>
             </div>
           )}
@@ -215,11 +215,11 @@ function TeamTab() {
   const done = roster.people.filter((p) => p.done_this_month).length;
   return (
     <div className="space-y-3">
-      <p className="text-sm text-slate-600">{done} of {roster.people.length} have a 1:1 logged this month.</p>
+      <p className="text-sm text-slate-400">{done} of {roster.people.length} have a 1:1 logged this month.</p>
       <div className="glass-card rounded-2xl overflow-hidden">
         {roster.people.map((p) => (
           <button key={p.id} type="button" onClick={() => open(p)}
-            className="flex w-full items-center justify-between gap-3 border-t border-slate-100 px-4 py-3 text-left first:border-t-0 hover:bg-slate-50/60">
+            className="flex w-full items-center justify-between gap-3 border-t border-slate-800 px-4 py-3 text-left first:border-t-0 hover:bg-slate-900/60">
             <div><div className="font-semibold">{p.name}</div><div className="text-xs text-slate-500">{p.departments || "—"}</div></div>
             <div className="text-right text-sm">
               <div>{p.done_this_month ? "✓ This month" : "— Not yet"}</div>
@@ -254,7 +254,7 @@ export default function OneOnOnePage() {
         <div className="flex gap-2" role="tablist">
           {([["team", "My team"], ["mine", "My 1:1s"]] as const).map(([key, name]) => (
             <button key={key} type="button" role="tab" aria-selected={active === key}
-              className={`rounded-xl border px-4 py-2 text-sm font-semibold ${active === key ? "btn-brand" : "border-slate-200 bg-white/70"}`}
+              className={`rounded-xl border px-4 py-2 text-sm font-semibold ${active === key ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}
               onClick={() => setTab(key)}>{name}</button>
           ))}
         </div>

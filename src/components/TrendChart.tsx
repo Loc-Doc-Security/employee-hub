@@ -42,8 +42,8 @@ export default function TrendChart({ title, hint, points, min = 1, max = 5, tick
           <div className="text-xs text-slate-500">{hint}</div>
         </div>
         <div className="text-xs text-slate-500 text-right">
-          {h ? <>{formatLabel(h.week)}: <span className="font-semibold text-slate-800">{h.value}</span></>
-             : sorted.length ? <>avg <span className="font-semibold text-slate-800">{avg.toFixed(1)}</span></> : null}
+          {h ? <>{formatLabel(h.week)}: <span className="font-semibold text-slate-200">{h.value}</span></>
+             : sorted.length ? <>avg <span className="font-semibold text-slate-200">{avg.toFixed(1)}</span></> : null}
         </div>
       </div>
       {sorted.length === 0 ? (
@@ -54,7 +54,7 @@ export default function TrendChart({ title, hint, points, min = 1, max = 5, tick
              onPointerMove={onMove} onPointerLeave={() => setHover(null)}>
           {gridValues.map((v) => (
             <g key={v}>
-              <line x1={PAD.l} x2={W - PAD.r} y1={y(v)} y2={y(v)} stroke="currentColor" className="text-slate-300" strokeOpacity={v === gridValues[Math.floor(gridValues.length / 2)] ? 0.9 : 0.45} strokeWidth={1} />
+              <line x1={PAD.l} x2={W - PAD.r} y1={y(v)} y2={y(v)} stroke="currentColor" className="text-slate-600" strokeOpacity={v === gridValues[Math.floor(gridValues.length / 2)] ? 0.9 : 0.45} strokeWidth={1} />
               <text x={PAD.l - 8} y={y(v) + 4} textAnchor="end" fontSize={11} className="fill-slate-500">{v}</text>
             </g>
           ))}
@@ -64,7 +64,7 @@ export default function TrendChart({ title, hint, points, min = 1, max = 5, tick
           {sorted.length === 1 && <circle cx={x(0)} cy={y(sorted[0].value)} r={4} fill="var(--theme-accent-600, #2563eb)" />}
           {h && hover !== null && (
             <g>
-              <line x1={x(hover)} x2={x(hover)} y1={PAD.t} y2={H - PAD.b} stroke="currentColor" className="text-slate-400" strokeWidth={1} />
+              <line x1={x(hover)} x2={x(hover)} y1={PAD.t} y2={H - PAD.b} stroke="currentColor" className="text-slate-600" strokeWidth={1} />
               <circle cx={x(hover)} cy={y(h.value)} r={5} fill="var(--theme-accent-600, #2563eb)" stroke="var(--theme-surface, #fff)" strokeWidth={2} />
             </g>
           )}

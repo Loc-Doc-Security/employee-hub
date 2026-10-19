@@ -16,12 +16,12 @@ export const LOGO_COLORS = ["White", "Black", "Green", "Grey", "Tone on Tone"];
 export const HAT_PLACEMENTS = ["Front", "Front Center", "Left Side", "Right Side", "Back"];
 const TYPE_LABEL: Record<string, string> = { uniform: "Uniform", sanmar: "SanMar", amazon: "Amazon" };
 const CART_KEY = "employee-hub:cart";
-const field = "w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm";
+const field = "w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm";
 const fmtDate = (d: string) => new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
 function CatalogPhoto({ id, alt }: { id: string | null; alt: string }) {
   const url = useUploadUrl(id);
-  return url ? <img src={url} alt={alt} className="h-40 w-full rounded-xl object-cover" /> : <div className="h-40 rounded-xl bg-slate-100/70" />;
+  return url ? <img src={url} alt={alt} className="h-40 w-full rounded-xl object-cover" /> : <div className="h-40 rounded-xl bg-slate-800/70" />;
 }
 
 function UniformCard({ item, onAdd }: { item: CatalogItem; onAdd: (l: Line) => void }) {
@@ -115,7 +115,7 @@ export function OrderCard({ o, admin }: { o: Order; admin?: React.ReactNode }) {
     <div className="glass-card rounded-2xl p-5 space-y-2">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="font-semibold">#{o.order_number ?? o.legacy_number ?? "—"} · {TYPE_LABEL[o.order_type]} <span className="text-sm font-normal text-slate-500">· {fmtDate(o.ordered_at)}</span></div>
-        <div className="text-sm"><span className="rounded-full border border-slate-300 px-3 py-1">{o.statusName}</span> <span className="ml-2 font-semibold">{o.points_charged} pts</span></div>
+        <div className="text-sm"><span className="rounded-full border border-slate-600 px-3 py-1">{o.statusName}</span> <span className="ml-2 font-semibold">{o.points_charged} pts</span></div>
       </div>
       {o.items.map((i) => (
         <div key={i.id} className="flex justify-between gap-3 text-sm">
@@ -180,10 +180,10 @@ export default function ShopPage() {
       <div className="flex gap-2 flex-wrap" role="tablist">
         {tabs.map(([k, n]) => (
           <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
-            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === k ? "btn-brand" : "border-slate-200 bg-white/70"}`}>{n}</button>
+            className={`rounded-xl border px-4 py-2 text-sm font-semibold ${tab === k ? "btn-brand" : "border-slate-700 bg-slate-900/70"}`}>{n}</button>
         ))}
       </div>
-      {message && <div className="rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-sm text-slate-800">{message}</div>}
+      {message && <div className="rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-sm text-slate-200">{message}</div>}
 
       {tab === "shop" && (
         <div className="space-y-6">
@@ -208,7 +208,7 @@ export default function ShopPage() {
           ))}
           {error && <div className="text-sm text-red-700">{error}</div>}
           {quote && (
-            <div className="border-t border-slate-200 pt-3 space-y-3">
+            <div className="border-t border-slate-700 pt-3 space-y-3">
               <div className="flex justify-between font-semibold"><span>Total</span><span>{quote.points} points</span></div>
               {!stock && quote.points > quote.balance && <div className="text-sm text-red-700">That's more than your {quote.balance} points.</div>}
               {data.isShopAdmin && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={stock} onChange={(e) => setStock(e.target.checked)} /> Stock order for the shelf (no points charged)</label>}
@@ -230,7 +230,7 @@ export default function ShopPage() {
       {tab === "points" && (
         <div className="glass-card rounded-2xl overflow-hidden">
           {!points ? <div className="p-4 text-sm text-slate-500">Loading…</div> : points.history.map((h) => (
-            <div key={h.id} className="flex justify-between gap-3 border-t border-slate-100 px-4 py-3 text-sm first:border-t-0">
+            <div key={h.id} className="flex justify-between gap-3 border-t border-slate-800 px-4 py-3 text-sm first:border-t-0">
               <span>{h.reason || "—"} <span className="text-xs text-slate-500">· {fmtDate(h.created_at)}{h.by !== "Automatic" ? ` · ${h.by}` : ""}</span></span>
               <span className={`font-semibold ${h.amount > 0 ? "" : "text-slate-500"}`}>{h.amount > 0 ? "+" : ""}{h.amount}</span>
             </div>

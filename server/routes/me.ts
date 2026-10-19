@@ -18,7 +18,7 @@ export function registerMeRoutes(app: express.Express, getAuthUser: GetAuthUser)
       let employee = null;
       if (access) {
         employee = (await db.query(
-          `SELECT e.id, e.first_name, e.last_name, e.email, c.id AS company_id, c.name AS company
+          `SELECT e.id, e.first_name, e.last_name, e.email, c.id AS company_id, c.name AS company, c.slug AS company_slug
              FROM employee_hub.employees e JOIN employee_hub.companies c ON c.id = e.company_id
             WHERE e.id = $1`,
           [access.employeeId],

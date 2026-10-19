@@ -1,13 +1,12 @@
-// Home: what's due this week, a slim strip of where you stand, what's new in Resources, and quick
-// links (Levi, 2026-10-19). Each card reads its feature's own "mine" endpoint, so Home always agrees
-// with the feature pages; each loads on its own, so one failing never blanks the page.
+// Home (Levi, 2026-10-19): what's due this week, where you stand, what's new in Resources, then the
+// tools as big icon tiles grouped like the Teamwix hub. The tiles are the main way around; the
+// sidebar stays collapsed to icons. Each card reads its feature's own "mine" endpoint, so Home
+// always agrees with the feature pages; each loads on its own, so one failing never blanks the page.
 import { useEffect, useState, type ComponentType } from "react";
 import { Link } from "react-router-dom";
-import {
-  BookOpen, CalendarDays, CalendarRange, CheckCircle2, ClipboardCheck, ClipboardList, CreditCard, Flame, Lightbulb,
-  MessagesSquare, Palmtree, ShoppingBag, Sparkles, SprayCan, Star, Trophy, Users,
-} from "lucide-react";
+import { CheckCircle2, ClipboardCheck, Palmtree, Sparkles, SprayCan, Star, Users } from "lucide-react";
 import { hubGet, useMe } from "../lib/hubApi";
+import { navFor } from "../lib/nav";
 import { ResourceIcon, type Resource } from "./ResourcesPage";
 
 function useData<T>(url: string | null) {
@@ -23,7 +22,7 @@ function useData<T>(url: string | null) {
 
 type Status = "done" | "todo" | "pto" | "waiting";
 const STATUS_STYLE: Record<Status, string> = {
-  done: "text-emerald-700",
+  done: "text-emerald-600",
   todo: "text-amber-700",
   pto: "text-slate-500",
   waiting: "text-slate-500",
@@ -33,16 +32,19 @@ function DueCard({ icon: Icon, title, status, line, to, action }: {
   icon: ComponentType<{ className?: string }>; title: string; status: Status | null; line: string; to: string; action?: string;
 }) {
   return (
-    <div className="glass-card rounded-2xl p-5 flex flex-col gap-3">
-      <div className="flex items-center gap-2 font-semibold"><Icon className="w-5 h-5 text-slate-500" />{title}</div>
-      <div className={`text-sm flex items-center gap-1.5 ${status ? STATUS_STYLE[status] : "text-slate-400"}`}>
+    <div className="hub-card p-4 flex flex-col gap-3">
+      <div className="flex items-center gap-3">
+        <span className="hub-icon-chip hub-icon-chip--sm"><Icon /></span>
+        <span className="font-bold">{title}</span>
+      </div>
+      <div className={`text-sm flex items-center gap-1.5 ${status ? STATUS_STYLE[status] : "text-slate-500"}`}>
         {status === "done" && <CheckCircle2 className="w-4 h-4" />}
         {status === "pto" && <Palmtree className="w-4 h-4" />}
         {status === null ? "Loading…" : line}
       </div>
       <div className="mt-auto">
         {action
-          ? <Link to={to} className="btn-brand inline-block text-sm">{action}</Link>
+          ? <Link to={to} className="btn-brand text-sm">{action}</Link>
           : <Link to={to} className="btn-text text-sm">Open</Link>}
       </div>
     </div>
@@ -100,16 +102,19 @@ function TeamCard() {
     <div className="text-sm">
       {missing.length
         ? <details><summary className="cursor-pointer text-amber-700">{label}: {missing.length} of {expected} not yet</summary>
-            <div className="mt-1 text-slate-600">{missing.join(", ")}</div></details>
-        : <div className="text-emerald-700 flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" />{label}: all {expected} done</div>}
+            <div className="mt-1 text-slate-400">{missing.join(", ")}</div></details>
+        : <div className="text-emerald-600 flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" />{label}: all {expected} done</div>}
     </div>
   );
   return (
-    <div className="glass-card rounded-2xl p-5 space-y-2 md:col-span-2 xl:col-span-1">
-      <div className="flex items-center gap-2 font-semibold"><Users className="w-5 h-5 text-slate-500" />Your team <span className="text-sm font-normal text-slate-500">{data.people} people</span></div>
+    <div className="hub-card p-4 space-y-2">
+      <div className="flex items-center gap-3">
+        <span className="hub-icon-chip hub-icon-chip--sm"><Users /></span>
+        <span className="font-bold">Your team</span><span className="text-sm text-slate-500">{data.people} people</span>
+      </div>
       <Row label="Weekly reports" missing={data.weekly.missing} expected={data.weekly.expected} />
       {data.cleanliness.expected > 0 && <Row label="Cleanliness audits" missing={data.cleanliness.missing} expected={data.cleanliness.expected} />}
-      <div className="text-sm text-slate-600">1:1s this month: {data.oneOnOnes.done} of {data.oneOnOnes.total}</div>
+      <div className="text-sm text-slate-400">1:1s this month: {data.oneOnOnes.done} of {data.oneOnOnes.total}</div>
       <div className="flex gap-3 pt-1">
         <Link to="/team-report" className="btn-text text-sm">Team Report</Link>
         <Link to="/one-on-ones" className="btn-text text-sm">1:1s</Link>
@@ -120,10 +125,10 @@ function TeamCard() {
 
 function Stat({ to, label, value, sub }: { to: string; label: string; value: string; sub?: string }) {
   return (
-    <Link to={to} className="glass-card rounded-2xl px-4 py-3 hover:shadow-md transition-shadow">
-      <div className="text-xs text-slate-500">{label}</div>
+    <Link to={to} className="hub-card px-4 py-3 transition-shadow hover:shadow-md">
+      <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</div>
       <div className="text-xl font-black">{value}</div>
-      {sub && <div className="text-xs text-slate-500">{sub}</div>}
+      {sub && <div className="text-xs text-slate-500 truncate">{sub}</div>}
     </Link>
   );
 }
@@ -140,12 +145,12 @@ function Strip() {
   const holiday = calendar?.items.find((i) => i.kind === "holiday");
   return (
     <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-      <Stat to="/my-score" label="My score this month" value={score ? `${score.overall}%` : "…"}
-        sub={score && score.streak > 0 ? `${score.streak}-month streak` : undefined} />
+      <Stat to="/my-score" label="My score" value={score ? `${score.overall}%` : "…"}
+        sub={score && score.streak > 0 ? `${score.streak}-month streak` : "This month"} />
       <Stat to="/my-score" label={score ? `${score.quarter.label} level` : "Level"} value={score?.quarter.level.name ?? "…"}
         sub={score ? `${score.quarter.points} pts${score.quarter.level.nextAt ? ` · ${score.quarter.level.nextAt - score.quarter.points} to ${score.quarter.level.nextName}` : ""}` : undefined} />
       <Stat to="/shop" label="Shop points" value={points ? points.balance.toLocaleString() : "…"} />
-      <Stat to="/calendar" label="Next holiday" value={calendar === undefined ? "…" : holiday ? new Date(`${holiday.start}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" }) : "None scheduled"}
+      <Stat to="/calendar" label="Next holiday" value={calendar === undefined ? "…" : holiday ? new Date(`${holiday.start}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" }) : "None yet"}
         sub={holiday?.title} />
       <Stat to="/one-on-ones" label="Last 1:1" value={oneOnOnes === undefined ? "…" : last ? new Date(`${last}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" }) : "None yet"} />
     </div>
@@ -159,15 +164,12 @@ function NewInResources() {
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 4);
   if (!recent.length) return null;
   return (
-    <section className="space-y-2">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold inline-flex items-center gap-2"><Sparkles className="w-4 h-4" />New in Resources</h2>
-        <Link to="/resources" className="btn-text text-sm">All resources</Link>
-      </div>
+    <section>
+      <div className="hub-section-title"><Sparkles className="w-3.5 h-3.5" />New in Resources<Link to="/resources" className="ml-auto normal-case tracking-normal font-semibold btn-text text-xs">All resources</Link></div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
         {recent.map((r) => (
-          <Link key={r.id} to={`/resources/${r.slug}`} className="glass-card rounded-2xl p-3 flex gap-2 items-start hover:shadow-md transition-shadow">
-            <ResourceIcon r={r} className="w-4 h-4 mt-0.5 text-slate-500" />
+          <Link key={r.id} to={`/resources/${r.slug}`} className="hub-card p-3 flex gap-3 items-center transition-shadow hover:shadow-md">
+            <span className="hub-icon-chip hub-icon-chip--sm"><ResourceIcon r={r} /></span>
             <span className="min-w-0"><span className="block text-sm font-semibold truncate">{r.title}</span>
               <span className="block text-xs text-slate-500">{r.category}</span></span>
           </Link>
@@ -177,32 +179,25 @@ function NewInResources() {
   );
 }
 
-function QuickLinks() {
+function Tools() {
   const { me } = useMe();
-  const p = me?.permissions ?? {};
-  const links: { to: string; label: string; icon: ComponentType<{ className?: string }>; show?: boolean }[] = [
-    { to: "/resources", label: "Resources", icon: BookOpen },
-    { to: "/calendar", label: "Calendar", icon: CalendarRange },
-    { to: "/my-score", label: "My Score", icon: Trophy },
-    { to: "/shop", label: "Shop", icon: ShoppingBag },
-    { to: "/people", label: "People", icon: Users },
-    { to: "/one-on-ones", label: "1:1s", icon: MessagesSquare },
-    { to: "/tech-spotlight", label: "Tech Spotlight", icon: Lightbulb },
-    { to: "/credit-card", label: "Credit Card", icon: CreditCard },
-    { to: "/team-report", label: "Team Report", icon: ClipboardList, show: !!p["reports.view_team"] },
-    { to: "/wednesday-meeting", label: "Wednesday Meeting", icon: CalendarDays, show: !!p["meetings.manage"] },
-  ];
+  if (!me) return null;
   return (
-    <section className="space-y-2">
-      <h2 className="text-lg font-semibold">Quick links</h2>
-      <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 gap-2">
-        {links.filter((l) => l.show !== false).map(({ to, label, icon: Icon }) => (
-          <Link key={to} to={to} className="glass-card rounded-xl p-3 flex flex-col items-center gap-1 text-center hover:shadow-md transition-shadow">
-            <Icon className="w-5 h-5 text-slate-600" /><span className="text-xs">{label}</span>
-          </Link>
-        ))}
-      </div>
-    </section>
+    <>
+      {navFor(me).map((g) => (
+        <section key={g.id}>
+          <div className="hub-section-title">{g.label}</div>
+          <div className="hub-tiles">
+            {g.items.map(({ to, label, icon: Icon, description }) => (
+              <Link key={to} to={to} className="hub-tile" title={description}>
+                <span className="hub-icon-chip hub-icon-chip--lg"><Icon /></span>
+                <span className="hub-tile__name">{label}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ))}
+    </>
   );
 }
 
@@ -215,17 +210,17 @@ export default function HomePage() {
   const { me } = useMe();
   const first = me?.employee?.first_name;
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold">{greeting()}{first ? `, ${first}` : ""}</h1>
-        <p className="text-sm text-slate-500">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
+        <p className="text-sm text-slate-500">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}{me?.employee ? ` · ${me.employee.company}` : ""}</p>
       </div>
       {me && !me.employee ? (
-        <div className="glass-card rounded-2xl p-6 text-sm text-slate-600">Your sign-in isn't linked to an employee profile yet. Ask an Onboarding Admin to add you.</div>
+        <div className="hub-card p-6 text-sm text-slate-400">Your sign-in isn't linked to an employee profile yet. Ask an Onboarding Admin to add you.</div>
       ) : (
         <>
-          <section className="space-y-2">
-            <h2 className="text-lg font-semibold">Due this week</h2>
+          <section>
+            <div className="hub-section-title">Due this week</div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
               <WeeklyCard />
               <CleanlinessCard />
@@ -235,7 +230,7 @@ export default function HomePage() {
           </section>
           <Strip />
           <NewInResources />
-          <QuickLinks />
+          <Tools />
         </>
       )}
     </div>
