@@ -1,6 +1,6 @@
-// Read-only Google Drive access for Resources, as a Google service account (a robot Google account
-// the hub signs in as). Each company's Resources folder is shared with the service account's email
-// as Viewer; it can't see anything else.
+// Read-only Google access, as a Google service account (a robot Google account the hub signs in
+// as): Drive for Resources, Sheets for the credit card sync. Each folder or Sheet is shared with the
+// service account's email as Viewer; it can't see anything else.
 //
 // Credentials: GOOGLE_SERVICE_ACCOUNT_JSON (the key file's contents) or GOOGLE_SERVICE_ACCOUNT_FILE
 // (a path to it). Without either, Drive features report "not connected" and nothing else breaks.
@@ -9,7 +9,7 @@
 import { createSign } from "crypto";
 import { readFileSync } from "fs";
 
-const SCOPE = "https://www.googleapis.com/auth/drive.readonly";
+const SCOPE = "https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/spreadsheets.readonly";
 const API = "https://www.googleapis.com/drive/v3";
 const FOLDER = "application/vnd.google-apps.folder";
 const DOC = "application/vnd.google-apps.document";
@@ -52,10 +52,19 @@ async function accessToken(): Promise<string> {
   return token.value;
 }
 
-async function drive(pathAndQuery: string): Promise<Response> {
-  const res = await fetch(`${API}${pathAndQuery}`, { headers: { Authorization: `Bearer ${await accessToken()}` } });
+async function drive(pathAndQuery: string, base = API): Promise<Response> {
+  const res = await fetch(`${base}${pathAndQuery}`, { headers: { Authorization: `Bearer ${await accessToken()}` } });
   if (res.status === 404) throw new Error(`Not found, or not shared with ${serviceAccountEmail()}.`);
-  if (!res.ok) throw new Error(`Google Drive error ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  if (!res.ok) {
+    const raw = await res.text();
+    let message = raw.slice(0, 200);
+    try { message = (JSON.parse(raw) as { error?: { message?: string } }).error?.message ?? message; } catch { /* not JSON */ }
+    if (/cannot be exported/i.test(message)) {
+      throw new Error(`Drive won't let the hub read this Doc because its sharing stops viewers from downloading or copying. Give ${serviceAccountEmail()} Editor access (the hub still can only read), or turn that option off.`);
+    }
+    if (res.status === 403) throw new Error(`No access. Share it with ${serviceAccountEmail()}. (${message})`);
+    throw new Error(`Google error ${res.status}: ${message}`);
+  }
   return res;
 }
 
@@ -133,4 +142,17 @@ export function folderIdFrom(input: string): string | null {
   const m = s.match(/\/folders\/([A-Za-z0-9_-]{10,})/) ?? s.match(/[?&]id=([A-Za-z0-9_-]{10,})/);
   if (m) return m[1];
   return /^[A-Za-z0-9_-]{10,}$/.test(s) ? s : null;
+}
+
+const SHEETS = "https://sheets.googleapis.com/v4/spreadsheets";
+
+/** A tab's cells as plain values (gid = the tab from the link; null = the first tab). */
+export async function sheetValues(sheetId: string, gid: string | null): Promise<{ tab: string; values: unknown[][] }> {
+  const id = encodeURIComponent(sheetId);
+  const meta = await (await drive(`/${id}?fields=sheets.properties(sheetId,title)`, SHEETS)).json() as { sheets: { properties: { sheetId: number; title: string } }[] };
+  const tab = (gid === null ? meta.sheets[0] : meta.sheets.find((x) => String(x.properties.sheetId) === gid))?.properties.title;
+  if (!tab) throw new Error("That tab isn't in the Sheet anymore. Paste the Sheet link again.");
+  const range = encodeURIComponent(`'${tab.replace(/'/g, "''")}'!A1:Z1000`);
+  const body = await (await drive(`/${id}/values/${range}?valueRenderOption=UNFORMATTED_VALUE`, SHEETS)).json() as { values?: unknown[][] };
+  return { tab, values: body.values ?? [] };
 }
