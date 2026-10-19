@@ -4,7 +4,7 @@
 import { useEffect, useState, type ComponentType } from "react";
 import { Link } from "react-router-dom";
 import {
-  BookOpen, CalendarDays, CheckCircle2, ClipboardCheck, ClipboardList, CreditCard, Flame, Lightbulb,
+  BookOpen, CalendarDays, CalendarRange, CheckCircle2, ClipboardCheck, ClipboardList, CreditCard, Flame, Lightbulb,
   MessagesSquare, Palmtree, ShoppingBag, Sparkles, SprayCan, Star, Trophy, Users,
 } from "lucide-react";
 import { hubGet, useMe } from "../lib/hubApi";
@@ -133,13 +133,20 @@ function Strip() {
   const points = useData<{ balance: number }>("/api/shop/points").data;
   const oneOnOnes = useData<{ met_on: string }[]>("/api/one-on-ones/mine").data;
   const last = oneOnOnes?.[0]?.met_on;
+  const today = new Date();
+  const from = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const to = new Date(today.getTime() + 100 * 864e5).toISOString().slice(0, 10);
+  const calendar = useData<{ items: { kind: string; title: string; start: string }[] }>(`/api/calendar?from=${from}&to=${to}`).data;
+  const holiday = calendar?.items.find((i) => i.kind === "holiday");
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
       <Stat to="/my-score" label="My score this month" value={score ? `${score.overall}%` : "…"}
         sub={score && score.streak > 0 ? `${score.streak}-month streak` : undefined} />
       <Stat to="/my-score" label={score ? `${score.quarter.label} level` : "Level"} value={score?.quarter.level.name ?? "…"}
         sub={score ? `${score.quarter.points} pts${score.quarter.level.nextAt ? ` · ${score.quarter.level.nextAt - score.quarter.points} to ${score.quarter.level.nextName}` : ""}` : undefined} />
       <Stat to="/shop" label="Shop points" value={points ? points.balance.toLocaleString() : "…"} />
+      <Stat to="/calendar" label="Next holiday" value={calendar === undefined ? "…" : holiday ? new Date(`${holiday.start}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" }) : "None scheduled"}
+        sub={holiday?.title} />
       <Stat to="/one-on-ones" label="Last 1:1" value={oneOnOnes === undefined ? "…" : last ? new Date(`${last}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" }) : "None yet"} />
     </div>
   );
@@ -175,6 +182,7 @@ function QuickLinks() {
   const p = me?.permissions ?? {};
   const links: { to: string; label: string; icon: ComponentType<{ className?: string }>; show?: boolean }[] = [
     { to: "/resources", label: "Resources", icon: BookOpen },
+    { to: "/calendar", label: "Calendar", icon: CalendarRange },
     { to: "/my-score", label: "My Score", icon: Trophy },
     { to: "/shop", label: "Shop", icon: ShoppingBag },
     { to: "/people", label: "People", icon: Users },
@@ -187,7 +195,7 @@ function QuickLinks() {
   return (
     <section className="space-y-2">
       <h2 className="text-lg font-semibold">Quick links</h2>
-      <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2">
+      <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 gap-2">
         {links.filter((l) => l.show !== false).map(({ to, label, icon: Icon }) => (
           <Link key={to} to={to} className="glass-card rounded-xl p-3 flex flex-col items-center gap-1 text-center hover:shadow-md transition-shadow">
             <Icon className="w-5 h-5 text-slate-600" /><span className="text-xs">{label}</span>
