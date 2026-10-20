@@ -1,3 +1,6 @@
+// NOTE: never glue a Tailwind class to a ${…} (e.g. "md:flex${x}"): Tailwind only generates classes it
+// can read as whole words, so the class silently disappears. Leave a space before the ${.
+//
 // The signed-in app frame (Levi, 2026-10-19). Desktop: a slim icon rail is always there; expanding
 // opens the full OMST sidebar (LabSideNav, unchanged) as a full-height panel that FLOATS over the
 // page, or, if pinned, DOCKS beside it (remembered per browser). The whole panel scrolls as one,
@@ -61,7 +64,7 @@ export default function HubShell({ side = "left", footer }: { side?: "left" | "r
     <LabSideNav
       // LabSideNav decides which groups are open on first draw; redraw once permissions load and when the page moves to another group.
       key={`${mode}-${openGroup}-${groups.map((g) => g.id).join(",")}`}
-      className={`hub-navpanel w-64 shrink-0${mode === "pinned" ? " hub-navpanel--docked" : ""}${side === "right" ? " lab-sidebar--right" : ""}`}
+      className={`hub-navpanel w-64 shrink-0 ${mode === "pinned" ? "hub-navpanel--docked" : ""}${side === "right" ? " lab-sidebar--right" : ""}`}
       header={
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-1 px-1">
@@ -102,7 +105,7 @@ export default function HubShell({ side = "left", footer }: { side?: "left" | "r
   );
 
   return (
-    <div className={`hub-shell min-h-screen md:flex${side === "right" ? " md:flex-row-reverse" : ""}`}>
+    <div className={`hub-shell min-h-screen md:flex ${side === "right" ? "md:flex-row-reverse" : ""}`}>
       {/* Phones: top bar + drawer */}
       <div className="hub-topbar md:hidden">
         <button type="button" className="hub-nav-toggle" aria-label="Open menu" onClick={() => setOpen(true)}><Menu /></button>

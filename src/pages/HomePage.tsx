@@ -59,7 +59,8 @@ type TeamSummary = null | {
   people: number;
   weekly: { expected: number; missing: string[] };
   cleanliness: { expected: number; missing: string[] };
-  oneOnOnes: { done: number; total: number };
+  peer: { expected: number; missing: string[] };
+  oneOnOnes: { done: number; total: number; missing: string[] };
 };
 
 function WeeklyCard() {
@@ -95,31 +96,36 @@ function PeerCard() {
     : <DueCard icon={Star} title="Peer Assessments" status="todo" line={`${done} of ${total} done for ${month}`} to="/peer-assessments" action={done ? "Continue" : "Start"} />;
 }
 
-function TeamCard() {
+/** Your team (managers): one box per metric, each opening the page where it's handled. */
+function TeamSection() {
   const { data } = useData<TeamSummary>("/api/home/team");
   if (!data || !data.people) return null;
-  const Row = ({ label, missing, expected }: { label: string; missing: string[]; expected: number }) => (
-    <div className="text-sm">
-      {missing.length
-        ? <details><summary className="cursor-pointer text-amber-700">{label}: {missing.length} of {expected} not yet</summary>
-            <div className="mt-1 text-slate-400">{missing.join(", ")}</div></details>
-        : <div className="text-emerald-600 flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" />{label}: all {expected} done</div>}
-    </div>
-  );
+  const boxes: { to: string; label: string; missing: string[]; expected: number; noun: string }[] = [
+    { to: "/team-report", label: "Weekly reports", missing: data.weekly.missing, expected: data.weekly.expected, noun: "this week" },
+    ...(data.cleanliness.expected > 0 ? [{ to: "/cleanliness/report", label: "Cleanliness audits", missing: data.cleanliness.missing, expected: data.cleanliness.expected, noun: "this week" }] : []),
+    { to: "/team-report", label: "Peer assessments given", missing: data.peer.missing, expected: data.peer.expected, noun: "this month" },
+    { to: "/one-on-ones", label: "1:1s", missing: data.oneOnOnes.missing, expected: data.oneOnOnes.total, noun: "this month" },
+  ];
   return (
-    <div className="hub-card p-4 space-y-2">
-      <div className="flex items-center gap-3">
-        <span className="hub-icon-chip hub-icon-chip--sm"><Users /></span>
-        <span className="font-bold">Your team</span><span className="text-sm text-slate-500">{data.people} people</span>
+    <section>
+      <div className="hub-section-title"><Users className="w-3.5 h-3.5" />Your team · {data.people} people</div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {boxes.map((b) => {
+          const done = b.expected - b.missing.length;
+          const all = b.missing.length === 0;
+          return (
+            <Link key={b.label} to={b.to} className="hub-card px-4 py-3 transition-shadow hover:shadow-md"
+              title={b.missing.length ? `Not yet: ${b.missing.join(", ")}` : undefined}>
+              <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">{b.label}</div>
+              <div className="text-xl font-black">{done} <span className="text-sm font-semibold text-slate-500">of {b.expected}</span></div>
+              <div className={`text-xs ${all ? "text-emerald-600" : "text-amber-700"} flex items-center gap-1`}>
+                {all ? <><CheckCircle2 className="w-3.5 h-3.5" />All done {b.noun}</> : `${b.missing.length} not yet ${b.noun}`}
+              </div>
+            </Link>
+          );
+        })}
       </div>
-      <Row label="Weekly reports" missing={data.weekly.missing} expected={data.weekly.expected} />
-      {data.cleanliness.expected > 0 && <Row label="Cleanliness audits" missing={data.cleanliness.missing} expected={data.cleanliness.expected} />}
-      <div className="text-sm text-slate-400">1:1s this month: {data.oneOnOnes.done} of {data.oneOnOnes.total}</div>
-      <div className="flex gap-3 pt-1">
-        <Link to="/team-report" className="btn-text text-sm">Team Report</Link>
-        <Link to="/one-on-ones" className="btn-text text-sm">1:1s</Link>
-      </div>
-    </div>
+    </section>
   );
 }
 
@@ -221,14 +227,14 @@ export default function HomePage() {
         <>
           <section>
             <div className="hub-section-title">Due this week</div>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
               <WeeklyCard />
               <CleanlinessCard />
               <PeerCard />
-              <TeamCard />
             </div>
           </section>
           <Strip />
+          <TeamSection />
           <NewInResources />
           <Tools />
         </>
