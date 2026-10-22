@@ -53,7 +53,10 @@
 .hub-shell :is(.btn-brand, .btn-brand-secondary):hover { color: #fff; }
 
 /* The company logo (outside the layer so image defaults can't stretch it). */
-.hub-brand-logo { height: 2rem; width: auto; max-width: 9.5rem; object-fit: contain; }
+.hub-brand-logo { height: 2rem; width: auto; max-width: 8rem; object-fit: contain; }
+/* The Employee Hub mark (white background in the file, so a white rounded tile in dark mode too). */
+.hub-app-mark { height: 2rem; width: 2rem; object-fit: contain; flex-shrink: 0; border-radius: 6px; background: #fff; }
+.hub-app-mark--rail { height: 2.5rem; width: 2.5rem; padding: 2px; }
 
 @layer components {
 /* Section label: small, uppercase, quiet, with a rule (Teamwix hub). */

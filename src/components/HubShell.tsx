@@ -14,7 +14,7 @@ import HubBackLink from "./HubBackLink";
 import { useApp } from "../context/AppContext";
 import { useMe } from "../lib/hubApi";
 import { HOME, navFor } from "../lib/nav";
-import { PRODUCT_NAME } from "../lib/brand";
+import { LOGO_SRC, PRODUCT_NAME } from "../lib/brand";
 import "../styles/hub.css";
 
 const PINNED_KEY = "hub.nav.pinned";
@@ -30,11 +30,18 @@ function usePinned(): [boolean, (v: boolean) => void] {
   return [v, set];
 }
 
-/** The person's company logo (public/logos/<company>.png), or the product name if there isn't one. */
+/** The Employee Hub mark (public/lab-logo.png) beside the person's company logo
+ *  (public/logos/<company>.png, or the product name if there isn't one). */
 function Brand({ slug }: { slug?: string }) {
   const [failed, setFailed] = useState(false);
-  if (!slug || failed) return <span className="text-sm font-black truncate">{PRODUCT_NAME}</span>;
-  return <img src={`/logos/${slug}.png`} alt={PRODUCT_NAME} className="hub-brand-logo" onError={() => setFailed(true)} />;
+  return (
+    <span className="flex items-center gap-2 min-w-0">
+      <img src={LOGO_SRC} alt="" className="hub-app-mark" />
+      {!slug || failed
+        ? <span className="text-sm font-black truncate">{PRODUCT_NAME}</span>
+        : <img src={`/logos/${slug}.png`} alt={PRODUCT_NAME} className="hub-brand-logo" onError={() => setFailed(true)} />}
+    </span>
+  );
 }
 
 function isActive(pathname: string, to: string) {
@@ -88,6 +95,7 @@ export default function HubShell({ side = "left", footer }: { side?: "left" | "r
 
   const rail = (
     <nav className={`lab-sidebar hub-rail${side === "right" ? " lab-sidebar--right" : ""}`} aria-label="Main menu">
+      <Link to="/" title={PRODUCT_NAME} aria-label={`${PRODUCT_NAME} home`} className="mb-1"><img src={LOGO_SRC} alt="" className="hub-app-mark hub-app-mark--rail" /></Link>
       <button type="button" className="hub-nav-toggle mb-1" aria-label="Open menu" title="Open menu" aria-expanded={open} onClick={() => setOpen(true)}><PanelLeftOpen /></button>
       <div className="hub-rail__items custom-scrollbar">
         {[[HOME], ...groups.map((g) => g.items)].map((items, i) => (

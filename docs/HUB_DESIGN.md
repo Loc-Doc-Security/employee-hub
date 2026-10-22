@@ -53,7 +53,9 @@ The OMST theme (`vendor/lab-theme`) is the umbrella. The hub adds a layer undern
 
 ## Logos
 
-`public/logos/<company slug>.png`, shown for the signed-in person's company (Loc-Doc now, Buffalo
+- **Employee Hub mark:** `public/lab-logo.png` (the template's logo path): browser tab icon, sign-in
+  page, top of the icon rail, and beside the company logo in the menu and the phone top bar.
+- **Company logo:** `public/logos/<company slug>.png`, shown for the signed-in person's company (Loc-Doc now, Buffalo
 later); falls back to the product name.
 
 ## Known theme issue (for the OMST owner)
